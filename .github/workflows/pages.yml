@@ -28,10 +28,10 @@ jobs:
 
       - name: Assemble pages artifact
         run: |
-          mkdir -p _site
+          mkdir -p _site/results
           cp index.html _site/
-          cp results/classification.json _site/
-          cp results/reasoning.json _site/
+          cp results/classification.json _site/results/
+          cp results/reasoning.json _site/results/
 
       - uses: actions/upload-pages-artifact@v3
         with:
