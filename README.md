@@ -26,26 +26,25 @@ PromptFoo benchmarks and Cloudflare Worker for the [Arco](https://github.com/car
 
 ## Running Benchmarks (PromptFoo)
 
-Copy `.env.example` to `.env` and fill in your credentials, then from this directory:
+Copy `.env.example` to `.env` and fill in your credentials, then install dependencies and run:
 
 ```bash
-# Classification benchmark
-npx promptfoo@latest eval -c classification.yaml --output results/classification.json
-
-# Reasoning benchmark
-npx promptfoo@latest eval -c reasoning.yaml --output results/reasoning.json
-
-# Run without GEMINI_API_KEY override (required for Vertex AI OAuth)
-env -u GEMINI_API_KEY npx promptfoo@latest eval -c classification.yaml
-
-# Llama 4 MaaS requires a fresh GCLOUD_TOKEN; refresh before running:
-GCLOUD_TOKEN=$(gcloud auth print-access-token) npx promptfoo@latest eval ...
+npm install
 ```
+
+| Command | Description |
+|---------|-------------|
+| `npm run eval:classification` | Run classification benchmark (all providers, cached) |
+| `npm run eval:reasoning` | Run reasoning benchmark (all providers, cached) |
+| `npm run eval:fresh` | Run both benchmarks without cache (forces fresh API calls) |
+| `npm run view` | Open the PromptFoo UI to browse results |
+
+Results are merged into `results/classification.json` and `results/reasoning.json` after each run.
 
 **Provider notes:**
 - `vertex:` providers read `VERTEX_PROJECT_ID` and `VERTEX_REGION` (not `GCP_PROJECT_ID`/`GCP_LOCATION`)
-- `GEMINI_API_KEY` in the shell overrides Vertex OAuth mode — unset it with `env -u GEMINI_API_KEY`
-- Llama 4 MaaS tokens expire hourly; run them separately to avoid aborting the whole eval
+- `GEMINI_API_KEY` in the shell overrides Vertex OAuth mode — the eval scripts unset it automatically
+- Llama 4 MaaS tokens expire hourly; the scripts auto-refresh via `gcloud auth print-access-token` — ensure `gcloud` is authenticated
 
 ## Cloudflare Worker
 

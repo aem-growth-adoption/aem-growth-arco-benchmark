@@ -3,11 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "eval:classification": "env -u GEMINI_API_KEY promptfoo eval -c classification.yaml --max-concurrency 10 --output /tmp/pf-class.json && node scripts/merge-results.mjs results/classification.json /tmp/pf-class.json",
-    "eval:reasoning": "env -u GEMINI_API_KEY promptfoo eval -c reasoning.yaml --max-concurrency 10 --output /tmp/pf-reason.json && node scripts/merge-results.mjs results/reasoning.json /tmp/pf-reason.json",
-    "eval:cerebras": "promptfoo eval -c classification.yaml --filter-providers cerebras --max-concurrency 10 --output /tmp/pf-class.json && node scripts/merge-results.mjs results/classification.json /tmp/pf-class.json && promptfoo eval -c reasoning.yaml --filter-providers cerebras --max-concurrency 10 --output /tmp/pf-reason.json && node scripts/merge-results.mjs results/reasoning.json /tmp/pf-reason.json",
-    "eval:cloudflare": "promptfoo eval -c classification.yaml --filter-providers cloudflare --max-concurrency 10 --output /tmp/pf-class.json && node scripts/merge-results.mjs results/classification.json /tmp/pf-class.json && promptfoo eval -c reasoning.yaml --filter-providers cloudflare --max-concurrency 10 --output /tmp/pf-reason.json && node scripts/merge-results.mjs results/reasoning.json /tmp/pf-reason.json",
-    "eval:fresh": "env -u GEMINI_API_KEY promptfoo eval -c classification.yaml --no-cache --max-concurrency 10 --output /tmp/pf-class.json && node scripts/merge-results.mjs results/classification.json /tmp/pf-class.json && env -u GEMINI_API_KEY promptfoo eval -c reasoning.yaml --no-cache --max-concurrency 10 --output /tmp/pf-reason.json && node scripts/merge-results.mjs results/reasoning.json /tmp/pf-reason.json",
+    "eval:classification": "env -u GEMINI_API_KEY GCLOUD_TOKEN=$(gcloud auth print-access-token) promptfoo eval -c classification.yaml --max-concurrency 10 --output /tmp/pf-class.json && node scripts/merge-results.mjs results/classification.json /tmp/pf-class.json",
+    "eval:reasoning": "env -u GEMINI_API_KEY GCLOUD_TOKEN=$(gcloud auth print-access-token) promptfoo eval -c reasoning.yaml --max-concurrency 10 --output /tmp/pf-reason.json && node scripts/merge-results.mjs results/reasoning.json /tmp/pf-reason.json",
+    "eval:fresh": "env -u GEMINI_API_KEY GCLOUD_TOKEN=$(gcloud auth print-access-token) promptfoo eval -c classification.yaml --no-cache --max-concurrency 10 --output /tmp/pf-class.json && node scripts/merge-results.mjs results/classification.json /tmp/pf-class.json && env -u GEMINI_API_KEY GCLOUD_TOKEN=$(gcloud auth print-access-token) promptfoo eval -c reasoning.yaml --no-cache --max-concurrency 10 --output /tmp/pf-reason.json && node scripts/merge-results.mjs results/reasoning.json /tmp/pf-reason.json",
     "view": "promptfoo view"
   },
   "devDependencies": {
