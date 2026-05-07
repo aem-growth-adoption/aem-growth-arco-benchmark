@@ -29,16 +29,16 @@ providers:
     label: gemini-3.1-pro-preview
 
   # ── Google Vertex AI — Llama (Meta MaaS, serverless) ────────────────────────
-  - id: "openai:meta/llama-4-maverick-17b-128e-instruct-maas"
+  - id: "openai:chat:meta/llama-4-maverick-17b-128e-instruct-maas"
     label: vertex/llama-4-maverick
     config:
-      apiBaseUrl: "https://us-east5-aiplatform.googleapis.com/v1beta1/projects/{{env.GCP_PROJECT_ID}}/locations/us-east5/endpoints/openapi"
+      apiBaseUrl: "https://us-east5-aiplatform.googleapis.com/v1beta1/projects/{{env.VERTEX_PROJECT_ID}}/locations/us-east5/endpoints/openapi"
       apiKeyEnvar: GCLOUD_TOKEN
 
-  - id: "openai:meta/llama-4-scout-17b-16e-instruct-maas"
+  - id: "openai:chat:meta/llama-4-scout-17b-16e-instruct-maas"
     label: vertex/llama-4-scout
     config:
-      apiBaseUrl: "https://us-east5-aiplatform.googleapis.com/v1beta1/projects/{{env.GCP_PROJECT_ID}}/locations/us-east5/endpoints/openapi"
+      apiBaseUrl: "https://us-east5-aiplatform.googleapis.com/v1beta1/projects/{{env.VERTEX_PROJECT_ID}}/locations/us-east5/endpoints/openapi"
       apiKeyEnvar: GCLOUD_TOKEN
 
   - id: vertex:llama-3.3-70b-instruct-maas
@@ -62,56 +62,56 @@ providers:
     label: vertex/mistral-small-3.1
 
   # ── Cerebras (OpenAI-compatible, ~900 tok/s) ─────────────────────────────────
-  - id: openai:qwen-3-235b-a22b-instruct-2507
+  - id: openai:chat:qwen-3-235b-a22b-instruct-2507
     label: cerebras/qwen-3-235b
     config:
       apiBaseUrl: https://api.cerebras.ai/v1
       apiKeyEnvar: CEREBRAS_API_KEY
 
-  - id: openai:llama3.1-8b
+  - id: openai:chat:llama3.1-8b
     label: cerebras/llama-3.1-8b
     config:
       apiBaseUrl: https://api.cerebras.ai/v1
       apiKeyEnvar: CEREBRAS_API_KEY
 
-  - id: openai:gpt-oss-120b
+  - id: openai:chat:gpt-oss-120b
     label: cerebras/gpt-oss-120b
     config:
       apiBaseUrl: https://api.cerebras.ai/v1
       apiKeyEnvar: CEREBRAS_API_KEY
 
   # ── Cloudflare Workers AI (OpenAI-compatible, edge inference) ────────────────
-  - id: "openai:@cf/meta/llama-4-scout-17b-16e-instruct"
+  - id: "openai:chat:@cf/meta/llama-4-scout-17b-16e-instruct"
     label: cloudflare/llama-4-scout-17b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
-  - id: "openai:@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+  - id: "openai:chat:@cf/meta/llama-3.3-70b-instruct-fp8-fast"
     label: cloudflare/llama-3.3-70b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
-  - id: "openai:@cf/mistralai/mistral-small-3.1-24b-instruct"
+  - id: "openai:chat:@cf/mistralai/mistral-small-3.1-24b-instruct"
     label: cloudflare/mistral-small-3.1
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
-  - id: "openai:@cf/qwen/qwq-32b"
+  - id: "openai:chat:@cf/qwen/qwq-32b"
     label: cloudflare/qwq-32b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
-  - id: "openai:@cf/deepseek-ai/deepseek-r1-distill-qwen-32b"
+  - id: "openai:chat:@cf/deepseek-ai/deepseek-r1-distill-qwen-32b"
     label: cloudflare/deepseek-r1-distill
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
-  - id: "openai:@cf/google/gemma-3-12b-it"
+  - id: "openai:chat:@cf/google/gemma-3-12b-it"
     label: cloudflare/gemma-3-12b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
@@ -156,7 +156,7 @@ providers:
 
 defaultTest:
   options:
-    transform: 'output.replace(/^```(?:json)?\s*/m, "").replace(/\s*```\s*$/m, "").trim()'
+    transform: '(typeof output === "string" ? output : output?.content ?? JSON.stringify(output)).replace(/^```(?:json)?\s*/m, "").replace(/\s*```\s*$/m, "").trim()'
   assert:
     - type: is-json
       description: "Output is valid JSON"
