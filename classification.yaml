@@ -44,9 +44,6 @@ providers:
   - id: vertex:llama-3.3-70b-instruct-maas
     label: vertex/llama-3.3-70b
 
-  - id: vertex:llama-3.1-70b-instruct-maas
-    label: vertex/llama-3.1-70b
-
   # ── Google Vertex AI — Gemma ─────────────────────────────────────────────────
   - id: vertex:gemma-3-27b-it
     label: vertex/gemma-3-27b
@@ -117,6 +114,12 @@ providers:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
+  - id: "openai:chat:@cf/google/gemma-4-26b-a4b-it"
+    label: cloudflare/gemma-4-26b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
   # ── AWS Bedrock ───────────────────────────────────────────────────────────────
   - id: bedrock:us.anthropic.claude-3-5-haiku-20241022-v1:0
     label: bedrock/claude-3-5-haiku
@@ -156,7 +159,7 @@ providers:
 
 defaultTest:
   options:
-    transform: '(typeof output === "string" ? output : output?.content ?? JSON.stringify(output)).replace(/^```(?:json)?\s*/m, "").replace(/\s*```\s*$/m, "").trim()'
+    transform: '(s => { s = typeof output === "string" ? output : output?.content ?? JSON.stringify(output); s = s.replace(/<think>[\s\S]*?<\/think>/g, "").replace(/^```(?:json)?\s*/m, "").replace(/\s*```\s*$/m, ""); const i = s.indexOf("{"), j = s.lastIndexOf("}"); return i !== -1 && j !== -1 ? s.slice(i, j + 1).trim() : s.trim(); })()'
   assert:
     - type: is-json
       description: "Output is valid JSON"
