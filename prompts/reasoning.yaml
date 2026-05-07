@@ -87,6 +87,8 @@
 
     **ALWAYS** include a `follow-up` block as the very last block.
 
+    Keep `content` as an empty object `{}` — this benchmark evaluates block *selection*, not content generation.
+
 - role: user
   content: |
     ## User Query

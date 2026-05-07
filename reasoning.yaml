@@ -62,8 +62,8 @@ providers:
     label: vertex/mistral-small-3.1
 
   # ── Cerebras (OpenAI-compatible, ~900 tok/s) ─────────────────────────────────
-  - id: openai:llama-3.3-70b-instruct-fp8-fast
-    label: cerebras/llama-3.3-70b
+  - id: openai:qwen-3-235b-a22b-instruct-2507
+    label: cerebras/qwen-3-235b
     config:
       apiBaseUrl: https://api.cerebras.ai/v1
       apiKeyEnvar: CEREBRAS_API_KEY

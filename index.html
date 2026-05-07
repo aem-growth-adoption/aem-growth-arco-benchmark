@@ -115,7 +115,7 @@
             ${failingTests.map(r => `
               <div class="test-row fail-row">
                 <div class="test-query">${escHtml(r.vars?.query || JSON.stringify(r.vars))}</div>
-                <div class="test-reason">${escHtml(r.gradingResult?.reason || '')}</div>
+                <div class="test-reason">${escHtml(failReasons(r))}</div>
               </div>`).join('')}
           </details>` : '';
         return `
@@ -208,6 +208,15 @@
       renderRows(containerId);
     }
 
+    function failReasons(r) {
+      const components = r.gradingResult?.componentResults || [];
+      const failing = components.filter(c => !c.pass);
+      if (failing.length) {
+        return failing.map(c => c.assertion?.description || c.reason.split('\n')[0]).join(' · ');
+      }
+      return (r.gradingResult?.reason || '').split('\nStack Trace:')[0].split('\n')[0];
+    }
+
     function escHtml(s) {
       return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
@@ -223,8 +232,8 @@
       }
     }
 
-    load('classification.json', 'classification');
-    load('reasoning.json', 'reasoning');
+    load('results/classification.json', 'classification');
+    load('results/reasoning.json', 'reasoning');
   </script>
 </body>
 </html>
