@@ -38,15 +38,19 @@
     ## Special Handling Rules
 
     1. **Support / Frustrated** — If the query contains "problem", "broken", "leaking",
-       "warranty", "return", or "not working", lead with **support-triage**.
+       "warranty", "return", "not working", "tripping", "circuit breaker", "trips",
+       "electrical issue", "won't turn on", "keeps shutting off", "error", or "help" with
+       a device complaint, lead with **support-triage**.
     2. **Yes / No Questions** — If the query starts with "can arco", "will it",
        "does it", "is it worth", or "should I", lead with **quick-answer**.
     3. **Beginner Queries** — Keywords: "first espresso machine", "switching from pods",
-       "never made espresso", "beginner", "new to espresso", "nespresso". Use an
-       empathetic **hero** followed by beginner-friendly recommendations.
+       "never made espresso", "I've never made", "beginner", "new to espresso",
+       "nespresso", "switching from nespresso", "pod machine", "capsule machine",
+       "where do I start". Use an empathetic **hero** followed by beginner-friendly
+       recommendations.
     4. **Budget-Conscious** — Keywords: "budget", "afford", "cheap", "worth it",
-       "student", "expensive". Use **budget-breakdown**. Segment as under $700 /
-       $700-$2000 / $2000+.
+       "student", "expensive", "affordable", "inexpensive", "cheapest". Use
+       **budget-breakdown**. Segment as under $700 / $700-$2000 / $2000+.
     5. **Gift Queries** — Keywords: "gift", "birthday", "wedding", "christmas". Use
        **hero** + product recommendation cards.
     6. **Office / Commercial** — Keywords: "restaurant", "office", "commercial",
@@ -67,6 +71,8 @@
     13. **Arco Model Comparison** — Detect when the user mentions two or more Arco
         model names (e.g. "Primo vs Doppio"), or uses "compare" / "difference
         between". **MUST** include **best-pick** + **comparison-table**.
+    14. **Reviews / Social Proof** — Keywords: "reviews", "customers say", "opinions",
+        "what do people think", "ratings", "feedback". Include **testimonials** block.
 
     ## Output Format
 
@@ -88,6 +94,11 @@
     **ALWAYS** include a `follow-up` block as the very last block.
 
     Keep `content` as an empty object `{}` — this benchmark evaluates block *selection*, not content generation.
+
+    **OUTPUT RULES — CRITICAL:**
+    - Return ONLY valid JSON. No markdown fences, no `\`\`\`json`, no thinking text, no explanations before or after.
+    - `content` MUST be an empty object `{}` for every block — never generate content descriptions or field values.
+    - Your entire response must start with `{` and end with `}`.
 
 - role: user
   content: |

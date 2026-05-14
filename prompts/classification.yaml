@@ -12,29 +12,46 @@
     - Grinders: filtro, preciso, macinino, zero
 
     ## Intent Types
-    - discovery: User is browsing or exploring the product line
-    - comparison: User wants to compare products
-    - product-detail: User asks about a specific product
-    - use-case: User describes a use case or scenario
-    - specs: User asks about specifications or technical details
-    - reviews: User asks about reviews or customer experiences
-    - price: User asks about pricing, value, or budget
-    - recommendation: User wants a personal recommendation
-    - support: User has a problem, warranty question, or issue
-    - gift: User is buying for someone else
-    - beginner: User is new to espresso or coffee equipment
-    - upgrade: User is upgrading from existing equipment
-    - technique: User asks about brewing technique, recipes, or methods
+    - discovery: User is broadly browsing or exploring the product line with no specific criteria
+    - comparison: User wants to compare two or more specific products
+    - product-detail: User asks for in-depth information about one specific product
+    - use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)
+    - specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)
+    - reviews: User asks about reviews, opinions, ratings, or customer experiences
+    - price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)
+    - recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal
+    - support: User has a product problem, malfunction, error, warranty question, or repair issue
+    - gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)
+    - beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)
+    - upgrade: User wants to upgrade from their current equipment to something better
+    - technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods
 
-    ## Journey Stages
-    - exploring: Early research, broad questions, browsing
-    - comparing: Narrowing options, feature comparisons, trade-offs
-    - deciding: Ready to buy, final questions, confirmation seeking
+    ## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:
+    1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)
+    2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else
+    3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)
+    4. **specs** — primary question is about technical specifications
+    5. **comparison** — user explicitly compares two or more named products
+    6. **price** — affordability or budget is the PRIMARY stated concern
+    7. **use-case** — user describes a specific use scenario or context
+    8. **recommendation** — personal recommendation request with no other specific signal
+    9. **discovery** — broad browsing with no specific criteria (lowest priority)
 
-    ## Instructions
-    Analyse the user query and return a JSON object (no markdown fences, no extra text):
+    ## Examples
+    - "switching from Nespresso, what Arco machine should I get?" → **beginner** (switching from pod machine)
+    - "I've never made espresso before, where do I start?" → **beginner** (new to espresso)
+    - "best machine for a busy home office with multiple users" → **use-case** (specific scenario)
+    - "I'm a student, what's the most affordable Arco espresso machine?" → **price** (budget is primary concern)
+    - "best espresso machine as a birthday gift for a coffee lover" → **gift** (buying for someone else)
+    - "I'm an experienced barista who dials in single origin, what should I get?" → **recommendation** (expertise-based personal recommendation)
+    - "show me all your espresso machines" → **discovery** (broad browsing)
+    - "my primo keeps tripping the circuit breaker" → **support** (product malfunction)
+
+    ## Output Instructions
+    Return ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.
+
     {
-      "intentType": "<one of the intent types above>",
+      "intentType": "<one of the 13 intent types above>",
       "confidence": <0.0 to 1.0>,
       "entities": {
         "products": ["<arco model names mentioned>"],
@@ -44,9 +61,11 @@
       "journeyStage": "<exploring | comparing | deciding>"
     }
 
-    Extract ALL Arco model names if mentioned. Only include a model in "products" if the user mentions it by name.
-    If the user asks about a category (e.g. "a grinder", "espresso machines"), set the appropriate useCases (e.g. ["grinder"], ["espresso-machine"]) — do NOT guess a specific model.
-    If the user mentions competitor brands, still classify normally and note Arco products that are relevant.
+    CRITICAL:
+    - "products" MUST always be an array — use [] if no Arco products are mentioned by name
+    - Only include a model in "products" if the user explicitly names it
+    - If the user asks about a category (e.g. "a grinder"), use useCases — do NOT guess a model name
+    - Return ONLY the JSON object. No markdown, no fences, no commentary before or after.
 
 - role: user
   content: 'Classify this query: "{{query}}"\n\nReturn JSON only.'

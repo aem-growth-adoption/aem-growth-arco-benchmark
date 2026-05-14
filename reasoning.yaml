@@ -167,7 +167,7 @@ providers:
 
 defaultTest:
   options:
-    transform: '(s => { s = typeof output === "string" ? output : output?.content ?? JSON.stringify(output); s = s.replace(/<think>[\s\S]*?<\/think>/g, "").replace(/^```(?:json)?\s*/m, "").replace(/\s*```\s*$/m, ""); const i = s.indexOf("{"), j = s.lastIndexOf("}"); return i !== -1 && j !== -1 ? s.slice(i, j + 1).trim() : s.trim(); })()'
+    transform: '(s=>{s=typeof output==="string"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\s\S]*?<\/think>/g,"").replace(/^```(?:json)?\s*/m,"").replace(/\s*```\s*$/m,"");const i=s.indexOf("{");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c==="\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c==="{")d++;else if(c==="}"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()'
   assert:
     - type: is-json
       description: "Output is valid JSON"
