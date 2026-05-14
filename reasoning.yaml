@@ -120,6 +120,14 @@ providers:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
+  # ── Kubernetes — Self-hosted (vLLM, OpenAI-compatible) ──────────────────────
+  # Requires: kubectl port-forward -n gemma-system svc/gemma-4-e4b-server 8000:8000
+  - id: "openai:chat:gemma-4-e4b-it"
+    label: "k8s/gemma-4-e4b-it (nvidia-l4)"
+    config:
+      apiBaseUrl: "http://localhost:8000/v1"
+      apiKey: "none"
+
   # ── AWS Bedrock ───────────────────────────────────────────────────────────────
   - id: bedrock:us.anthropic.claude-3-5-haiku-20241022-v1:0
     label: bedrock/claude-3-5-haiku
