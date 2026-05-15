@@ -73,7 +73,7 @@ wrangler secret put AWS_SECRET_ACCESS_KEY
 
 ## Benchmark Report
 
-Results are published to GitHub Pages at `https://solid-bassoon-mvjk2mp.pages.github.io/` after each push to `main`.
+[Results are published to GitHub Pages](https://solid-bassoon-mvjk2mp.pages.github.io/) after each push to `main`.
 
 To preview locally:
 
