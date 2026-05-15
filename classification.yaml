@@ -120,6 +120,12 @@ providers:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
+  - id: "openai:chat:@cf/nvidia/nemotron-3-120b-a12b"
+    label: cloudflare/nemotron-3-super-120b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
   # ── Kubernetes — Self-hosted (vLLM, OpenAI-compatible) ──────────────────────
   # Requires: kubectl port-forward -n gemma-system svc/gemma-4-e4b-server 8000:8000
   - id: "openai:chat:gemma-4-e4b-it"
@@ -164,6 +170,27 @@ providers:
     config:
       region: us-east-1
       top_k: 1
+
+  # ── AWS Bedrock — NVIDIA Nemotron ─────────────────────────────────────────────
+  - id: bedrock:converse:nvidia.nemotron-nano-9b-v2
+    label: bedrock/nemotron-nano-9b-v2
+    config:
+      region: us-east-1
+
+  - id: bedrock:converse:nvidia.nemotron-nano-12b-v2
+    label: bedrock/nemotron-nano-12b-v2
+    config:
+      region: us-east-1
+
+  - id: bedrock:converse:nvidia.nemotron-nano-3-30b
+    label: bedrock/nemotron-nano-30b
+    config:
+      region: us-east-1
+
+  - id: bedrock:converse:nvidia.nemotron-super-3-120b
+    label: bedrock/nemotron-super-120b
+    config:
+      region: us-east-1
 
 defaultTest:
   options:
