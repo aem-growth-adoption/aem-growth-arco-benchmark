@@ -169,11 +169,11 @@ defaultTest:
   assert:
     - type: javascript
       description: "output contains at least 2 === block separators (3+ blocks)"
-      value: "(output.match(/^===\s*$/m) || []).length >= 2"
+      value: '(output.match(/===/g) || []).length >= 2'
 
     - type: javascript
       description: "first block is a hero block"
-      value: "(s => { const first = s.split(/^===\s*$/m)[0].trim(); try { return JSON.parse(first).block === 'hero'; } catch(e) { return false; } })(output)"
+      value: '(s => { const first = s.split("===")[0].trim(); try { return JSON.parse(first).block === ''hero''; } catch(e) { return false; } })(output)'
 
     - type: javascript
       description: "output contains a comparison-table block (critical rule 3)"
@@ -190,7 +190,7 @@ defaultTest:
     - type: javascript
       description: "suggestion types are only explore or compare"
       value: |
-        (s => {
+        return (s => {
           const sugg = s.match(/"suggestions"\s*:\s*(\[[\s\S]*?\])/);
           if (!sugg) return true;
           const suggTypes = (sugg[1].match(/"type"\s*:\s*"([^"]+)"/g) || []).map(t => t.match(/"type"\s*:\s*"([^"]+)"/)[1]);
@@ -200,15 +200,15 @@ defaultTest:
     - type: javascript
       description: "hero block contains an image token"
       value: |
-        (s => {
-          const first = s.split(/^===\s*$/m)[0].trim();
+        return (s => {
+          const first = s.split("===")[0].trim();
           return first.includes('product-image:') || first.includes('hero-image:');
         })(output)
 
     - type: javascript
       description: "all product hrefs use real catalog paths (no invented URLs)"
       value: |
-        (s => {
+        return (s => {
           const hrefs = (s.match(/"href"\s*:\s*"([^"]+)"/g) || []).map(h => h.match(/"href"\s*:\s*"([^"]+)"/)[1]);
           const productHrefs = hrefs.filter(h => h.startsWith('/products/'));
           const validPrefixes = ['/products/espresso-machines/', '/products/grinders/'];
@@ -229,7 +229,7 @@ tests:
     assert:
       - type: javascript
         description: "cold start uses hero-image:main (no specific product assumed)"
-        value: "output.split(/^===\\s*$/m)[0].includes('hero-image:main')"
+        value: "output.split('===')[0].includes('hero-image:main')"
 
   - description: "beginner: switching from Nespresso"
     vars:
