@@ -235,38 +235,9 @@ providers:
     config:
       region: us-east-1
 
-  # ── AWS Bedrock — NVIDIA Nemotron ─────────────────────────────────────────────
-  - id: bedrock:nvidia.nemotron-super-3-120b
-    label: bedrock/nemotron-super-120b
-    config:
-      region: us-east-1
-
-  - id: bedrock:nvidia.nemotron-nano-12b-v2
-    label: bedrock/nemotron-nano-12b
-    config:
-      region: us-east-1
-
   # ── AWS Bedrock — Qwen ────────────────────────────────────────────────────────
   - id: bedrock:qwen.qwen3-32b-v1:0
     label: bedrock/qwen3-32b
-    config:
-      region: us-east-1
-
-  # ── AWS Bedrock — Moonshot Kimi ───────────────────────────────────────────────
-  - id: bedrock:moonshotai.kimi-k2.5
-    label: bedrock/kimi-k2.5
-    config:
-      region: us-east-1
-
-  # ── AWS Bedrock — Google Gemma ────────────────────────────────────────────────
-  - id: bedrock:google.gemma-3-27b-it
-    label: bedrock/gemma-3-27b
-    config:
-      region: us-east-1
-
-  # ── AWS Bedrock — Z.AI GLM ────────────────────────────────────────────────────
-  - id: bedrock:zai.glm-4.7-flash
-    label: bedrock/glm-4.7-flash
     config:
       region: us-east-1
 
