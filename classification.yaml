@@ -128,9 +128,30 @@ providers:
       apiBaseUrl: "http://localhost:8000/v1"
       apiKey: "none"
 
-  # ── AWS Bedrock ───────────────────────────────────────────────────────────────
+  # ── AWS Bedrock — Anthropic ───────────────────────────────────────────────────
+  - id: bedrock:us.anthropic.claude-opus-4-20250514-v1:0
+    label: bedrock/claude-opus-4
+    config:
+      region: us-east-1
+
+  - id: bedrock:us.anthropic.claude-sonnet-4-20250514-v1:0
+    label: bedrock/claude-sonnet-4
+    config:
+      region: us-east-1
+
+  - id: bedrock:us.anthropic.claude-haiku-4-5-20251001-v1:0
+    label: bedrock/claude-haiku-4.5
+    config:
+      region: us-east-1
+
   - id: bedrock:us.anthropic.claude-3-5-haiku-20241022-v1:0
     label: bedrock/claude-3-5-haiku
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — Amazon Nova ─────────────────────────────────────────────────
+  - id: bedrock:amazon.nova-2-lite-v1:0
+    label: bedrock/nova-2-lite
     config:
       region: us-east-1
 
@@ -149,6 +170,12 @@ providers:
     config:
       region: us-east-1
 
+  # ── AWS Bedrock — Meta Llama ──────────────────────────────────────────────────
+  - id: bedrock:us.meta.llama4-maverick-17b-instruct-v1:0
+    label: bedrock/llama-4-maverick
+    config:
+      region: us-east-1
+
   - id: bedrock:us.meta.llama4-scout-17b-instruct-v1:0
     label: bedrock/llama-4-scout
     config:
@@ -159,11 +186,67 @@ providers:
     config:
       region: us-east-1
 
-  - id: bedrock:mistral.mistral-large-2402-v1:0
-    label: bedrock/mistral-large
+  - id: bedrock:us.meta.llama3-2-11b-instruct-v1:0
+    label: bedrock/llama-3.2-11b
     config:
       region: us-east-1
-      top_k: 1
+
+  # ── AWS Bedrock — Mistral ─────────────────────────────────────────────────────
+  - id: bedrock:mistral.mistral-large-3-675b-instruct
+    label: bedrock/mistral-large-3
+    config:
+      region: us-east-1
+
+  - id: bedrock:mistral.ministral-3-8b-instruct
+    label: bedrock/ministral-8b
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — DeepSeek ────────────────────────────────────────────────────
+  - id: bedrock:us.deepseek.r1-v1:0
+    label: bedrock/deepseek-r1
+    config:
+      region: us-east-1
+
+  - id: bedrock:deepseek.v3.2
+    label: bedrock/deepseek-v3.2
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — NVIDIA Nemotron ─────────────────────────────────────────────
+  - id: bedrock:nvidia.nemotron-super-3-120b
+    label: bedrock/nemotron-super-120b
+    config:
+      region: us-east-1
+
+  - id: bedrock:nvidia.nemotron-nano-12b-v2
+    label: bedrock/nemotron-nano-12b
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — Qwen ────────────────────────────────────────────────────────
+  - id: bedrock:qwen.qwen3-32b-v1:0
+    label: bedrock/qwen3-32b
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — Moonshot Kimi ───────────────────────────────────────────────
+  - id: bedrock:moonshotai.kimi-k2.5
+    label: bedrock/kimi-k2.5
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — Google Gemma ────────────────────────────────────────────────
+  - id: bedrock:google.gemma-3-27b-it
+    label: bedrock/gemma-3-27b
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — Z.AI GLM ────────────────────────────────────────────────────
+  - id: bedrock:zai.glm-4.7-flash
+    label: bedrock/glm-4.7-flash
+    config:
+      region: us-east-1
 
 defaultTest:
   options:
