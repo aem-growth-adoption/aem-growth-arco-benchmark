@@ -112,13 +112,23 @@
       tbody.innerHTML = sorted.map((ps, idx) => {
         const rankClass = idx === 0 ? 'rank-1' : idx === sorted.length - 1 ? 'rank-last' : '';
         const failingTests = ps.rows.filter(r => !r.success);
+        const passingTests = ps.rows.filter(r => r.success);
         const failHtml = failingTests.length ? `
           <details>
             <summary>${failingTests.length} failing test${failingTests.length > 1 ? 's' : ''}</summary>
             ${failingTests.map(r => `
               <div class="test-row fail-row">
-                <div class="test-query">${escHtml(r.vars?.query || JSON.stringify(r.vars))}</div>
+                <div class="test-query">${escHtml(r.description || r.vars?.query || JSON.stringify(r.vars))}</div>
+                <div class="test-meta">${escHtml(r.vars?.query || '')}</div>
                 <div class="test-reason">${escHtml(failReasons(r))}</div>
+              </div>`).join('')}
+          </details>` : '';
+        const passHtml = passingTests.length && failingTests.length ? `
+          <details>
+            <summary style="color:#16a34a">${passingTests.length} passing test${passingTests.length > 1 ? 's' : ''}</summary>
+            ${passingTests.map(r => `
+              <div class="test-row">
+                <div class="test-query">${escHtml(r.description || r.vars?.query || JSON.stringify(r.vars))}</div>
               </div>`).join('')}
           </details>` : '';
         return `
@@ -130,6 +140,7 @@
                 <div class="bar-wrap"><div class="bar" style="width:${ps.rate * 100}%;background:${color(ps.rate)}"></div></div>
               </div>
               ${failHtml}
+              ${passHtml}
             </td>
             <td>${ps.passed}/${ps.total}</td>
             <td class="latency">${fmt(ps.avgLatency)}</td>
