@@ -375,14 +375,34 @@ tests:
         value: "(() => { const t = JSON.parse(output).blocks.map(b => b.type); return t.includes('cards') || t.includes('product-list'); })()"
 
   - description: "use-case: home office multiple users"
+    threshold: 0.6
     vars:
       query: "best machine for a busy home office with multiple users"
       comparisonHint: ""
+    assert:
+      - type: javascript
+        description: "cards or product-list block present for multi-product use-case"
+        value: "(() => { const t = JSON.parse(output).blocks.map(b => b.type); return t.includes('cards') || t.includes('product-list'); })()"
+        weight: 2
+      - type: javascript
+        description: "follow-up is the last block"
+        value: "(() => { const b = JSON.parse(output).blocks; return b[b.length - 1]?.type === 'follow-up'; })()"
+        weight: 1
 
   - description: "specs: studio pro boiler and pressure"
+    threshold: 0.6
     vars:
       query: "what is the boiler size and pressure rating of the studio pro?"
       comparisonHint: ""
+    assert:
+      - type: javascript
+        description: "table or product-detail block present for specs query"
+        value: "(() => { const t = JSON.parse(output).blocks.map(b => b.type); return t.includes('table') || t.includes('product-detail'); })()"
+        weight: 2
+      - type: javascript
+        description: "follow-up is the last block"
+        value: "(() => { const b = JSON.parse(output).blocks; return b[b.length - 1]?.type === 'follow-up'; })()"
+        weight: 1
 
   - description: "reviews: nano customer opinions"
     vars:
@@ -403,9 +423,19 @@ tests:
         value: "JSON.parse(output).blocks.some(b => b.type === 'budget-breakdown')"
 
   - description: "recommendation: experienced barista"
+    threshold: 0.6
     vars:
       query: "I'm an experienced barista who dials in single origin, what should I get?"
       comparisonHint: ""
+    assert:
+      - type: javascript
+        description: "comparison-table block present for recommendation query"
+        value: "JSON.parse(output).blocks.some(b => b.type === 'comparison-table')"
+        weight: 2
+      - type: javascript
+        description: "follow-up is the last block"
+        value: "(() => { const b = JSON.parse(output).blocks; return b[b.length - 1]?.type === 'follow-up'; })()"
+        weight: 1
 
   - description: "support: machine tripping circuit breaker"
     vars:
@@ -429,11 +459,31 @@ tests:
         value: "JSON.parse(output).blocks.some(b => b.type === 'hero')"
 
   - description: "upgrade: from primo to next level"
+    threshold: 0.6
     vars:
       query: "I have the primo and want to upgrade, what should I consider?"
       comparisonHint: ""
+    assert:
+      - type: javascript
+        description: "comparison-table block present for upgrade query (rule 8)"
+        value: "JSON.parse(output).blocks.some(b => b.type === 'comparison-table')"
+        weight: 2
+      - type: javascript
+        description: "follow-up is the last block"
+        value: "(() => { const b = JSON.parse(output).blocks; return b[b.length - 1]?.type === 'follow-up'; })()"
+        weight: 1
 
   - description: "technique: milk steaming for latte art"
+    threshold: 0.6
     vars:
       query: "how do I steam milk properly for latte art?"
       comparisonHint: ""
+    assert:
+      - type: javascript
+        description: "video, cards, or accordion block present for technique query"
+        value: "(() => { const t = JSON.parse(output).blocks.map(b => b.type); return t.includes('video') || t.includes('cards') || t.includes('accordion'); })()"
+        weight: 2
+      - type: javascript
+        description: "follow-up is the last block"
+        value: "(() => { const b = JSON.parse(output).blocks; return b[b.length - 1]?.type === 'follow-up'; })()"
+        weight: 1
