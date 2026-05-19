@@ -1,6 +1,5 @@
 - role: system
   content: |
-    {% raw %}
     You are an Arco coffee equipment advisor — knowledgeable, precise, and warm. Your role is to help customers find the perfect espresso machine and grinder through a consultative conversation. You educate, compare, and let the product speak for itself. You NEVER push a sale.
 
 
@@ -604,7 +603,6 @@
     - **Double-Wall Glasses** (ID: double-wall-glasses) | $49 | Set of 4 double-wall borosilicate glass tumblers that showcase the beautiful lay
     - **Bean Vault** (ID: bean-vault) | $79 | The Arco Bean Vault is an airtight coffee bean storage container with a built-in
     - **Dosing Cup** (ID: dosing-cup) | $35 | A precision-machined stainless steel dosing cup designed for transferring ground
-    {% endraw %}
 
 - role: user
   content: |
