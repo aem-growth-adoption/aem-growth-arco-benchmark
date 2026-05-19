@@ -108,12 +108,6 @@ providers:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
-  - id: "openai:chat:@cf/deepseek/deepseek-r1-distill-qwen-32b"
-    label: cloudflare/deepseek-r1-distill
-    config:
-      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
-      apiKeyEnvar: CLOUDFLARE_API_TOKEN
-
   - id: "openai:chat:@cf/google/gemma-3-12b-it"
     label: cloudflare/gemma-3-12b
     config:
@@ -162,12 +156,6 @@ providers:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
-  - id: "openai:chat:@cf/meta/llama-3.2-3b-instruct"
-    label: cloudflare/llama-3.2-3b
-    config:
-      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
-      apiKeyEnvar: CLOUDFLARE_API_TOKEN
-
   - id: "openai:chat:@cf/ibm/granite-4.0-h-micro"
     label: cloudflare/granite-4.0-micro
     config:
@@ -210,11 +198,6 @@ providers:
       region: us-east-1
 
   # ── AWS Bedrock — Amazon Nova ─────────────────────────────────────────────────
-  - id: bedrock:amazon.nova-2-lite-v1:0
-    label: bedrock/nova-2-lite
-    config:
-      region: us-east-1
-
   - id: bedrock:amazon.nova-micro-v1:0
     label: bedrock/nova-micro
     config:
@@ -246,11 +229,6 @@ providers:
     config:
       region: us-east-1
 
-  - id: bedrock:us.meta.llama3-2-11b-instruct-v1:0
-    label: bedrock/llama-3.2-11b
-    config:
-      region: us-east-1
-
   # ── AWS Bedrock — Mistral ─────────────────────────────────────────────────────
   - id: bedrock:mistral.mistral-large-3-675b-instruct
     label: bedrock/mistral-large-3
@@ -263,11 +241,6 @@ providers:
       region: us-east-1
 
   # ── AWS Bedrock — DeepSeek ────────────────────────────────────────────────────
-  - id: bedrock:us.deepseek.r1-v1:0
-    label: bedrock/deepseek-r1
-    config:
-      region: us-east-1
-
   - id: bedrock:deepseek.v3.2
     label: bedrock/deepseek-v3.2
     config:
@@ -280,11 +253,6 @@ providers:
       region: us-east-1
 
   # ── AWS Bedrock — fast/small models ──────────────────────────────────────────
-  - id: bedrock:us.meta.llama3-2-3b-instruct-v1:0
-    label: bedrock/llama-3.2-3b
-    config:
-      region: us-east-1
-
   - id: bedrock:mistral.ministral-3-3b-instruct
     label: bedrock/ministral-3b
     config:
