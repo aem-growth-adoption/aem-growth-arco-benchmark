@@ -337,6 +337,7 @@ defaultTest:
 
 tests:
   - description: "cold-start: new visitor, no history"
+    threshold: 0.7
     vars:
       query: "show me all your espresso machines"
       scenario_prefix: |
@@ -350,8 +351,10 @@ tests:
       - type: javascript
         description: "cold start uses hero-image:main (no specific product assumed)"
         value: "output.split('===')[0].includes('hero-image:main')"
+        weight: 2
 
   - description: "beginner: switching from Nespresso"
+    threshold: 0.7
     vars:
       query: "switching from Nespresso, what Arco machine should I get?"
       scenario_prefix: |
@@ -369,8 +372,10 @@ tests:
       - type: javascript
         description: "recommends a beginner-friendly machine (primo, nano, or automatico)"
         value: "/(primo|nano|automatico)/i.test(output)"
+        weight: 2
 
   - description: "beginner: never made espresso before"
+    threshold: 0.7
     vars:
       query: "I've never made espresso before, where do I start?"
       scenario_prefix: |
@@ -383,8 +388,14 @@ tests:
       rag_guides: ""
       rag_reviews: ""
       intent_type: "beginner"
+    assert:
+      - type: javascript
+        description: "recommends a beginner-friendly machine (primo, nano, viaggio, or automatico)"
+        value: "/(primo|nano|viaggio|automatico)/i.test(output)"
+        weight: 2
 
   - description: "comparison: primo vs doppio"
+    threshold: 0.7
     vars:
       query: "primo vs doppio which is better for a home barista?"
       scenario_prefix: |
@@ -400,10 +411,16 @@ tests:
       intent_type: "comparison"
     assert:
       - type: javascript
+        description: "comparison-table block present"
+        value: 'output.includes("\"block\":\"comparison-table\"") || output.includes("\"block\": \"comparison-table\"")'
+        weight: 3
+      - type: javascript
         description: "mentions both primo and doppio"
         value: "/primo/i.test(output) && /doppio/i.test(output)"
+        weight: 2
 
   - description: "comparison: studio vs studio-pro"
+    threshold: 0.7
     vars:
       query: "what's the difference between the studio and studio-pro?"
       scenario_prefix: |
@@ -418,10 +435,16 @@ tests:
       intent_type: "comparison"
     assert:
       - type: javascript
+        description: "comparison-table block present"
+        value: 'output.includes("\"block\":\"comparison-table\"") || output.includes("\"block\": \"comparison-table\"")'
+        weight: 3
+      - type: javascript
         description: "mentions both studio models"
         value: "/studio/i.test(output)"
+        weight: 2
 
   - description: "product-detail: ufficio deep-dive"
+    threshold: 0.7
     vars:
       query: "tell me everything about the ufficio"
       scenario_prefix: |
@@ -437,10 +460,16 @@ tests:
       intent_type: "product-detail"
     assert:
       - type: javascript
+        description: "comparison-table block present"
+        value: 'output.includes("\"block\":\"comparison-table\"") || output.includes("\"block\": \"comparison-table\"")'
+        weight: 2
+      - type: javascript
         description: "mentions ufficio"
         value: "/ufficio/i.test(output)"
+        weight: 2
 
   - description: "use-case: home office multiple users"
+    threshold: 0.7
     vars:
       query: "best machine for a busy home office with multiple users"
       scenario_prefix: |
@@ -453,8 +482,14 @@ tests:
       rag_guides: ""
       rag_reviews: ""
       intent_type: "espresso"
+    assert:
+      - type: javascript
+        description: "recommends office-suited machine (ufficio or automatico)"
+        value: "/(ufficio|automatico)/i.test(output)"
+        weight: 2
 
   - description: "specs: studio pro boiler and pressure"
+    threshold: 0.7
     vars:
       query: "what is the boiler size and pressure rating of the studio pro?"
       scenario_prefix: |
@@ -472,8 +507,10 @@ tests:
       - type: javascript
         description: "mentions studio-pro"
         value: "/studio.pro|studio pro/i.test(output)"
+        weight: 2
 
   - description: "reviews: nano customer opinions"
+    threshold: 0.7
     vars:
       query: "what do customers say about the nano?"
       scenario_prefix: |
@@ -492,8 +529,10 @@ tests:
       - type: javascript
         description: "mentions nano"
         value: "/nano/i.test(output)"
+        weight: 2
 
   - description: "price: student budget"
+    threshold: 0.7
     vars:
       query: "I'm a student, what's the most affordable Arco espresso machine?"
       scenario_prefix: |
@@ -511,8 +550,10 @@ tests:
       - type: javascript
         description: "mentions the most affordable options (viaggio or nano)"
         value: "/(viaggio|nano)/i.test(output)"
+        weight: 2
 
   - description: "recommendation: experienced barista"
+    threshold: 0.7
     vars:
       query: "I'm an experienced barista who dials in single origin, what should I get?"
       scenario_prefix: |
@@ -528,10 +569,16 @@ tests:
       intent_type: "espresso"
     assert:
       - type: javascript
+        description: "comparison-table block present"
+        value: 'output.includes("\"block\":\"comparison-table\"") || output.includes("\"block\": \"comparison-table\"")'
+        weight: 2
+      - type: javascript
         description: "recommends a prosumer machine (studio or studio-pro)"
         value: "/studio/i.test(output)"
+        weight: 2
 
   - description: "support: machine tripping circuit breaker"
+    threshold: 0.7
     vars:
       query: "my primo keeps tripping the circuit breaker, help"
       scenario_prefix: |
@@ -547,8 +594,10 @@ tests:
       - type: javascript
         description: "mentions primo"
         value: "/primo/i.test(output)"
+        weight: 2
 
   - description: "gift: birthday present for coffee lover"
+    threshold: 0.7
     vars:
       query: "best espresso machine as a birthday gift for a coffee lover"
       scenario_prefix: |
@@ -562,8 +611,14 @@ tests:
       rag_guides: ""
       rag_reviews: ""
       intent_type: "gift"
+    assert:
+      - type: javascript
+        description: "recommends a gift-worthy machine (primo, doppio, or automatico)"
+        value: "/(primo|doppio|automatico)/i.test(output)"
+        weight: 2
 
   - description: "upgrade: from primo to next level"
+    threshold: 0.7
     vars:
       query: "I have the primo and want to upgrade, what should I consider?"
       scenario_prefix: |
@@ -585,10 +640,16 @@ tests:
       intent_type: "upgrade"
     assert:
       - type: javascript
+        description: "comparison-table block present"
+        value: 'output.includes("\"block\":\"comparison-table\"") || output.includes("\"block\": \"comparison-table\"")'
+        weight: 2
+      - type: javascript
         description: "recommends an upgrade over primo (doppio or studio)"
         value: "/(doppio|studio)/i.test(output)"
+        weight: 2
 
   - description: "technique: milk steaming for latte art"
+    threshold: 0.7
     vars:
       query: "how do I steam milk properly for latte art?"
       scenario_prefix: |
@@ -602,3 +663,8 @@ tests:
       rag_guides: ""
       rag_reviews: ""
       intent_type: "milk-drinks"
+    assert:
+      - type: javascript
+        description: "recommends a machine with a good steam wand (doppio, studio, or automatico)"
+        value: "/(doppio|studio|automatico)/i.test(output)"
+        weight: 2
