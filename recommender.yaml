@@ -100,7 +100,7 @@ providers:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
-  - id: "openai:chat:@cf/qwq-32b"
+  - id: "openai:chat:@cf/qwen/qwq-32b"
     label: cloudflare/qwq-32b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
@@ -124,7 +124,7 @@ providers:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
 
-  - id: "openai:chat:@cf/moonshot-ai/kimi-k2.6"
+  - id: "openai:chat:@cf/moonshotai/kimi-k2.6"
     label: cloudflare/kimi-k2.6
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
