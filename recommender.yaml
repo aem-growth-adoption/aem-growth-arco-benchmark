@@ -326,7 +326,7 @@ defaultTest:
 
     - type: javascript
       description: "all product hrefs use real catalog paths (no invented URLs)"
-      value: '(() => { const hrefs = (output.match(/"href"\s*:\s*"([^"]+)"/g) || []).map(h => h.match(/"href"\s*:\s*"([^"]+)"/)[1]); return hrefs.filter(h => h.startsWith("/products/")).every(h => h.startsWith("/products/espresso-machines/") || h.startsWith("/products/grinders/")); })()'
+      value: '(() => { const hrefs = (output.match(/"href"\s*:\s*"([^"]+)"/g) || []).map(h => h.match(/"href"\s*:\s*"([^"]+)"/)[1]); return hrefs.every(h => h.startsWith("/products/") || h.startsWith("/experiences/") || h.startsWith("/stories/")); })()'
       weight: 2
 
     # Tier 3 — Visual variety (weight 1)
@@ -440,7 +440,7 @@ tests:
         weight: 3
       - type: javascript
         description: "mentions both studio models"
-        value: "/studio/i.test(output)"
+        value: "/studio(?!-pro)/i.test(output) && /studio-pro/i.test(output)"
         weight: 2
 
   - description: "product-detail: ufficio deep-dive"
