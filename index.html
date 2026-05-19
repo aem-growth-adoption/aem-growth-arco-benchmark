@@ -56,27 +56,30 @@
 <body>
   <header>
     <h1>Arco Model Benchmark</h1>
-    <p>Gemini model comparison — classification &amp; reasoning</p>
+    <p>Model comparison — classification, reasoning &amp; recommender</p>
   </header>
   <main>
     <div class="tabs">
       <button class="tab active" onclick="switchTab('classification')">Intent Classification</button>
       <button class="tab" onclick="switchTab('reasoning')">Block Reasoning</button>
+      <button class="tab" onclick="switchTab('recommender')">Recommender</button>
     </div>
     <div id="classification" class="panel active"><div class="loading">Loading…</div></div>
     <div id="reasoning" class="panel"><div class="loading">Loading…</div></div>
+    <div id="recommender" class="panel"><div class="loading">Loading…</div></div>
   </main>
   <script>
     // sort state per panel: { col: 'rate'|'label'|'tests'|'latency', dir: 1|-1 }
     const sortState = {
       classification: { col: 'rate', dir: -1 },
       reasoning:      { col: 'rate', dir: -1 },
+      recommender:    { col: 'rate', dir: -1 },
     };
     // cached provider stats per panel
     const panelData = {};
 
     function switchTab(name) {
-      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ['classification','reasoning'][i] === name));
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ['classification','reasoning','recommender'][i] === name));
       document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === name));
     }
 
@@ -234,6 +237,7 @@
 
     load('results/classification.json', 'classification');
     load('results/reasoning.json', 'reasoning');
+    load('results/recommender.json', 'recommender');
   </script>
 </body>
 </html>
