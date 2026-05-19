@@ -349,8 +349,8 @@ tests:
         description: "intent = comparison"
         value: "JSON.parse(output).intentType === 'comparison'"
       - type: javascript
-        description: "extracts studio models as entities"
-        value: "(JSON.parse(output).entities?.products || []).some(x => x.includes('studio'))"
+        description: "extracts both studio and studio-pro as entities"
+        value: "(() => { const p = JSON.parse(output).entities?.products || []; const hasStudio = p.some(x => (x === 'studio' || x.includes('studio')) && !x.includes('pro')); const hasStudioPro = p.some(x => x.includes('studio-pro') || x.includes('studio pro')); return hasStudio && hasStudioPro; })()"
 
   - description: "product-detail: ufficio"
     vars:
