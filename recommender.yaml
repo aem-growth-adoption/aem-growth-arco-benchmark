@@ -292,53 +292,48 @@ defaultTest:
   options:
     transform: '(output=>{const s=typeof output==="string"?output:output?.content??JSON.stringify(output);return s.replace(/<think>[\s\S]*?<\/think>/g,"").replace(/^```(?:json)?\s*/m,"").replace(/\s*```\s*$/m,"").trim()})(output)'
   assert:
+    # Tier 1 — Structural integrity (weight 3): page is fundamentally renderable
     - type: javascript
-      description: "output contains at least 2 === block separators (3+ blocks)"
+      description: "output has at least 2 === separators (3+ blocks)"
       value: '(output.match(/===/g) || []).length >= 2'
+      weight: 3
 
     - type: javascript
-      description: "first block is a hero block"
-      value: '(s => { const first = s.split("===")[0].trim(); try { return JSON.parse(first).block === ''hero''; } catch(e) { return false; } })(output)'
-
-    - type: javascript
-      description: "output contains a comparison-table block (critical rule 3)"
-      value: "output.includes('\"block\":\"comparison-table\"') || output.includes('\"block\": \"comparison-table\"')"
-
-    - type: javascript
-      description: "suggestions are present at the end"
-      value: "output.includes('\"suggestions\"')"
-
-    - type: javascript
-      description: "no forbidden 'buy' suggestion type"
-      value: '!/"type"\s*:\s*"buy"/.test(output)'
-
-    - type: javascript
-      description: "suggestion types are only explore or compare"
-      value: |
-        return (s => {
-          const sugg = s.match(/"suggestions"\s*:\s*(\[[\s\S]*?\])/);
-          if (!sugg) return true;
-          const suggTypes = (sugg[1].match(/"type"\s*:\s*"([^"]+)"/g) || []).map(t => t.match(/"type"\s*:\s*"([^"]+)"/)[1]);
-          return suggTypes.every(t => t === 'explore' || t === 'compare');
-        })(output)
+      description: "first block is a hero"
+      value: '(() => { try { return JSON.parse(output.split("===")[0].trim()).block === "hero"; } catch(e) { return false; } })()'
+      weight: 3
 
     - type: javascript
       description: "hero block contains an image token"
-      value: |
-        return (s => {
-          const first = s.split("===")[0].trim();
-          return first.includes('product-image:') || first.includes('hero-image:');
-        })(output)
+      value: '(() => { const first = output.split("===")[0]; return first.includes("product-image:") || first.includes("hero-image:"); })()'
+      weight: 3
+
+    - type: javascript
+      description: "suggestions present at the end"
+      value: 'output.includes("\"suggestions\"")'
+      weight: 3
+
+    # Tier 2 — Rule compliance (weight 2): model follows prompt instructions
+    - type: javascript
+      description: "no forbidden buy suggestion type"
+      value: '!/"type"\s*:\s*"buy"/.test(output)'
+      weight: 2
+
+    - type: javascript
+      description: "suggestion types are only explore or compare"
+      value: '(() => { const sugg = output.match(/"suggestions"\s*:\s*(\[[\s\S]*?\])/); if (!sugg) return true; const types = (sugg[1].match(/"type"\s*:\s*"([^"]+)"/g) || []).map(t => t.match(/"type"\s*:\s*"([^"]+)"/)[1]); return types.every(t => t === "explore" || t === "compare"); })()'
+      weight: 2
 
     - type: javascript
       description: "all product hrefs use real catalog paths (no invented URLs)"
-      value: |
-        return (s => {
-          const hrefs = (s.match(/"href"\s*:\s*"([^"]+)"/g) || []).map(h => h.match(/"href"\s*:\s*"([^"]+)"/)[1]);
-          const productHrefs = hrefs.filter(h => h.startsWith('/products/'));
-          const validPrefixes = ['/products/espresso-machines/', '/products/grinders/'];
-          return productHrefs.every(h => validPrefixes.some(p => h.startsWith(p)));
-        })(output)
+      value: '(() => { const hrefs = (output.match(/"href"\s*:\s*"([^"]+)"/g) || []).map(h => h.match(/"href"\s*:\s*"([^"]+)"/)[1]); return hrefs.filter(h => h.startsWith("/products/")).every(h => h.startsWith("/products/espresso-machines/") || h.startsWith("/products/grinders/")); })()'
+      weight: 2
+
+    # Tier 3 — Visual variety (weight 1)
+    - type: javascript
+      description: "at least 2 different block types used"
+      value: '(() => { try { const blocks = output.split("===").slice(0,-1).map(s => JSON.parse(s.trim()).block); return new Set(blocks).size >= 2; } catch(e) { return false; } })()'
+      weight: 1
 
 tests:
   - description: "cold-start: new visitor, no history"
