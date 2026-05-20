@@ -6,6 +6,8 @@ on:
     paths:
       - 'results/*.json'
       - 'index.html'
+      - 'inspector.html'
+      - 'arco/**'
   workflow_dispatch:
 
 permissions:
@@ -30,8 +32,11 @@ jobs:
         run: |
           mkdir -p _site/results
           cp index.html _site/
+          cp inspector.html _site/
           cp results/classification.json _site/results/
           cp results/reasoning.json _site/results/
+          cp results/recommender.json _site/results/
+          cp -r arco _site/arco
 
       - uses: actions/upload-pages-artifact@v3
         with:
