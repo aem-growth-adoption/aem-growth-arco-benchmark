@@ -1,0 +1,73 @@
+/* Cards — soft shadows, rounded corners, image hover scale, warm accents */
+.cards {
+  margin-bottom: 48px;
+}
+
+.cards > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+}
+
+.cards > ul > li {
+  border: none;
+  border-radius: var(--card-radius, 12px);
+  background-color: var(--light-color);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.cards > ul > li:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.cards .cards-card-body {
+  padding: 24px;
+}
+
+.cards .cards-card-body > *:first-child {
+  margin-top: 0;
+}
+
+.cards .cards-card-body h1,
+.cards .cards-card-body h2,
+.cards .cards-card-body h3,
+.cards .cards-card-body h4 {
+  font-family: var(--heading-font-family);
+  font-weight: 600;
+  transition: color var(--transition);
+}
+
+.cards > ul > li:hover .cards-card-body h1,
+.cards > ul > li:hover .cards-card-body h2,
+.cards > ul > li:hover .cards-card-body h3,
+.cards > ul > li:hover .cards-card-body h4 {
+  color: var(--accent-color);
+}
+
+.cards .cards-card-body p {
+  color: var(--muted-color);
+  line-height: 1.7;
+  font-size: var(--body-font-size-s);
+}
+
+.cards .cards-card-image {
+  line-height: 0;
+  overflow: hidden;
+}
+
+.cards > ul > li img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.cards > ul > li:hover img {
+  transform: scale(1.08);
+}

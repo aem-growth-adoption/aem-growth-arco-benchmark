@@ -56,27 +56,30 @@
 <body>
   <header>
     <h1>Arco Model Benchmark</h1>
-    <p>Gemini model comparison — classification &amp; reasoning</p>
+    <p>Model comparison — classification, reasoning &amp; recommender &nbsp;·&nbsp; <a href="inspector.html" style="color:#aaa;font-size:0.85rem">Block Inspector →</a></p>
   </header>
   <main>
     <div class="tabs">
       <button class="tab active" onclick="switchTab('classification')">Intent Classification</button>
       <button class="tab" onclick="switchTab('reasoning')">Block Reasoning</button>
+      <button class="tab" onclick="switchTab('recommender')">Recommender</button>
     </div>
     <div id="classification" class="panel active"><div class="loading">Loading…</div></div>
     <div id="reasoning" class="panel"><div class="loading">Loading…</div></div>
+    <div id="recommender" class="panel"><div class="loading">Loading…</div></div>
   </main>
   <script>
     // sort state per panel: { col: 'rate'|'label'|'tests'|'latency', dir: 1|-1 }
     const sortState = {
       classification: { col: 'rate', dir: -1 },
       reasoning:      { col: 'rate', dir: -1 },
+      recommender:    { col: 'rate', dir: -1 },
     };
     // cached provider stats per panel
     const panelData = {};
 
     function switchTab(name) {
-      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ['classification','reasoning'][i] === name));
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ['classification','reasoning','recommender'][i] === name));
       document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === name));
     }
 
@@ -109,13 +112,23 @@
       tbody.innerHTML = sorted.map((ps, idx) => {
         const rankClass = idx === 0 ? 'rank-1' : idx === sorted.length - 1 ? 'rank-last' : '';
         const failingTests = ps.rows.filter(r => !r.success);
+        const passingTests = ps.rows.filter(r => r.success);
         const failHtml = failingTests.length ? `
           <details>
             <summary>${failingTests.length} failing test${failingTests.length > 1 ? 's' : ''}</summary>
             ${failingTests.map(r => `
               <div class="test-row fail-row">
-                <div class="test-query">${escHtml(r.vars?.query || JSON.stringify(r.vars))}</div>
+                <div class="test-query">${escHtml(r.description || r.vars?.query || JSON.stringify(r.vars))}</div>
+                <div class="test-meta">${escHtml(r.vars?.query || '')}</div>
                 <div class="test-reason">${escHtml(failReasons(r))}</div>
+              </div>`).join('')}
+          </details>` : '';
+        const passHtml = passingTests.length && failingTests.length ? `
+          <details>
+            <summary style="color:#16a34a">${passingTests.length} passing test${passingTests.length > 1 ? 's' : ''}</summary>
+            ${passingTests.map(r => `
+              <div class="test-row">
+                <div class="test-query">${escHtml(r.description || r.vars?.query || JSON.stringify(r.vars))}</div>
               </div>`).join('')}
           </details>` : '';
         return `
@@ -127,6 +140,7 @@
                 <div class="bar-wrap"><div class="bar" style="width:${ps.rate * 100}%;background:${color(ps.rate)}"></div></div>
               </div>
               ${failHtml}
+              ${passHtml}
             </td>
             <td>${ps.passed}/${ps.total}</td>
             <td class="latency">${fmt(ps.avgLatency)}</td>
@@ -234,6 +248,7 @@
 
     load('results/classification.json', 'classification');
     load('results/reasoning.json', 'reasoning');
+    load('results/recommender.json', 'recommender');
   </script>
 </body>
 </html>

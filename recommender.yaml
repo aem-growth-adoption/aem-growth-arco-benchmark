@@ -1,0 +1,647 @@
+description: "Arco recommender (single LLM call) — model comparison"
+
+prompts:
+  - file://prompts/recommender.yaml
+
+providers:
+  # ── Google Vertex AI — Gemini ────────────────────────────────────────────────
+  - id: vertex:gemini-2.5-flash-lite
+    label: gemini-2.5-flash-lite (production)
+
+  - id: vertex:gemini-2.5-flash
+    label: gemini-2.5-flash
+
+  - id: vertex:gemini-2.5-pro
+    label: gemini-2.5-pro
+
+  - id: vertex:gemini-2.0-flash
+    label: gemini-2.0-flash
+
+  - id: vertex:gemini-3-flash-preview
+    label: gemini-3-flash-preview
+
+  - id: vertex:gemini-3.1-flash-lite-preview
+    label: gemini-3.1-flash-lite-preview
+
+  - id: vertex:gemini-3.1-pro-preview
+    label: gemini-3.1-pro-preview
+
+  # ── Google Vertex AI — Llama (Meta MaaS, serverless) ────────────────────────
+  - id: "openai:chat:meta/llama-4-maverick-17b-128e-instruct-maas"
+    label: vertex/llama-4-maverick
+    config:
+      apiBaseUrl: "https://us-east5-aiplatform.googleapis.com/v1beta1/projects/{{env.VERTEX_PROJECT_ID}}/locations/us-east5/endpoints/openapi"
+      apiKeyEnvar: GCLOUD_TOKEN
+
+  - id: "openai:chat:meta/llama-4-scout-17b-16e-instruct-maas"
+    label: vertex/llama-4-scout
+    config:
+      apiBaseUrl: "https://us-east5-aiplatform.googleapis.com/v1beta1/projects/{{env.VERTEX_PROJECT_ID}}/locations/us-east5/endpoints/openapi"
+      apiKeyEnvar: GCLOUD_TOKEN
+
+  - id: vertex:llama-3.3-70b-instruct-maas
+    label: vertex/llama-3.3-70b
+
+  # ── Google Vertex AI — Gemma ─────────────────────────────────────────────────
+  - id: vertex:gemma-3-27b-it
+    label: vertex/gemma-3-27b
+
+  - id: vertex:gemma-3-12b-it
+    label: vertex/gemma-3-12b
+
+  # ── Google Vertex AI — Mistral ───────────────────────────────────────────────
+  - id: vertex:mistral-medium-3
+    label: vertex/mistral-medium-3
+
+  - id: vertex:mistral-small-2503
+    label: vertex/mistral-small-3.1
+
+  # ── Cerebras (OpenAI-compatible, ~900 tok/s) ─────────────────────────────────
+  - id: openai:chat:qwen-3-235b-a22b-instruct-2507
+    label: cerebras/qwen-3-235b
+    config:
+      apiBaseUrl: https://api.cerebras.ai/v1
+      apiKeyEnvar: CEREBRAS_API_KEY
+
+  - id: openai:chat:llama3.1-8b
+    label: cerebras/llama-3.1-8b
+    config:
+      apiBaseUrl: https://api.cerebras.ai/v1
+      apiKeyEnvar: CEREBRAS_API_KEY
+
+  - id: openai:chat:gpt-oss-120b
+    label: cerebras/gpt-oss-120b
+    config:
+      apiBaseUrl: https://api.cerebras.ai/v1
+      apiKeyEnvar: CEREBRAS_API_KEY
+
+  - id: openai:chat:zai-glm-4.7
+    label: cerebras/glm-4.7
+    config:
+      apiBaseUrl: https://api.cerebras.ai/v1
+      apiKeyEnvar: CEREBRAS_API_KEY
+
+  # ── Cloudflare Workers AI (OpenAI-compatible, edge inference) ────────────────
+  - id: "openai:chat:@cf/meta/llama-4-scout-17b-16e-instruct"
+    label: cloudflare/llama-4-scout-17b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    label: cloudflare/llama-3.3-70b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/mistralai/mistral-small-3.1-24b-instruct"
+    label: cloudflare/mistral-small-3.1
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/qwen/qwq-32b"
+    label: cloudflare/qwq-32b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/google/gemma-3-12b-it"
+    label: cloudflare/gemma-3-12b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/google/gemma-4-26b-a4b-it"
+    label: cloudflare/gemma-4-26b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/moonshotai/kimi-k2.6"
+    label: cloudflare/kimi-k2.6
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/nvidia/nemotron-3-120b-a12b"
+    label: cloudflare/nemotron-3-super-120b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/openai/gpt-oss-120b"
+    label: cloudflare/gpt-oss-120b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/openai/gpt-oss-20b"
+    label: cloudflare/gpt-oss-20b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/qwen/qwen3-30b-a3b-fp8"
+    label: cloudflare/qwen3-30b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  - id: "openai:chat:@cf/aisingapore/gemma-sea-lion-v4-27b-it"
+    label: cloudflare/sea-lion-v4-27b
+    config:
+      apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
+      apiKeyEnvar: CLOUDFLARE_API_TOKEN
+
+  # ── Kubernetes — Self-hosted (vLLM, OpenAI-compatible) ──────────────────────
+  # Requires: kubectl port-forward -n gemma-system svc/gemma-4-e4b-server 8000:8000
+  - id: "openai:chat:gemma-4-e4b-it"
+    label: "k8s/gemma-4-e4b-it (nvidia-l4)"
+    config:
+      apiBaseUrl: "http://localhost:8000/v1"
+      apiKey: "none"
+
+  # ── AWS Bedrock — Anthropic ───────────────────────────────────────────────────
+  - id: bedrock:us.anthropic.claude-opus-4-20250514-v1:0
+    label: bedrock/claude-opus-4
+    config:
+      region: us-east-1
+
+  - id: bedrock:us.anthropic.claude-sonnet-4-20250514-v1:0
+    label: bedrock/claude-sonnet-4
+    config:
+      region: us-east-1
+
+  - id: bedrock:us.anthropic.claude-haiku-4-5-20251001-v1:0
+    label: bedrock/claude-haiku-4.5
+    config:
+      region: us-east-1
+
+  - id: bedrock:us.anthropic.claude-3-5-haiku-20241022-v1:0
+    label: bedrock/claude-3-5-haiku
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — Amazon Nova ─────────────────────────────────────────────────
+  - id: bedrock:amazon.nova-micro-v1:0
+    label: bedrock/nova-micro
+    config:
+      region: us-east-1
+
+  - id: bedrock:amazon.nova-lite-v1:0
+    label: bedrock/nova-lite
+    config:
+      region: us-east-1
+
+  - id: bedrock:amazon.nova-pro-v1:0
+    label: bedrock/nova-pro
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — Meta Llama ──────────────────────────────────────────────────
+  - id: bedrock:us.meta.llama4-maverick-17b-instruct-v1:0
+    label: bedrock/llama-4-maverick
+    config:
+      region: us-east-1
+
+  - id: bedrock:us.meta.llama4-scout-17b-instruct-v1:0
+    label: bedrock/llama-4-scout
+    config:
+      region: us-east-1
+
+  - id: bedrock:us.meta.llama3-3-70b-instruct-v1:0
+    label: bedrock/llama-3.3-70b
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — Mistral ─────────────────────────────────────────────────────
+  - id: bedrock:mistral.mistral-large-3-675b-instruct
+    label: bedrock/mistral-large-3
+    config:
+      region: us-east-1
+
+  - id: bedrock:mistral.ministral-3-8b-instruct
+    label: bedrock/ministral-8b
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — DeepSeek ────────────────────────────────────────────────────
+  - id: bedrock:deepseek.v3.2
+    label: bedrock/deepseek-v3.2
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — Qwen ────────────────────────────────────────────────────────
+  - id: bedrock:qwen.qwen3-32b-v1:0
+    label: bedrock/qwen3-32b
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — fast/small models ──────────────────────────────────────────
+  - id: bedrock:mistral.ministral-3-3b-instruct
+    label: bedrock/ministral-3b
+    config:
+      region: us-east-1
+
+  # ── AWS Bedrock — NVIDIA Nemotron ─────────────────────────────────────────────
+  - id: bedrock:converse:nvidia.nemotron-nano-9b-v2
+    label: bedrock/nemotron-nano-9b-v2
+    config:
+      region: us-east-1
+
+  - id: bedrock:converse:nvidia.nemotron-nano-12b-v2
+    label: bedrock/nemotron-nano-12b-v2
+    config:
+      region: us-east-1
+
+  - id: bedrock:converse:nvidia.nemotron-nano-3-30b
+    label: bedrock/nemotron-nano-30b
+    config:
+      region: us-east-1
+
+  - id: bedrock:converse:nvidia.nemotron-super-3-120b
+    label: bedrock/nemotron-super-120b
+    config:
+      region: us-east-1
+
+defaultTest:
+  options:
+    transform: '(output=>{const s=typeof output==="string"?output:output?.content??JSON.stringify(output);return s.replace(/<think>[\s\S]*?<\/think>/g,"").replace(/^```(?:json)?\s*/m,"").replace(/\s*```\s*$/m,"").trim()})(output)'
+  assert:
+    # Tier 1 — Structural integrity (weight 3): page is fundamentally renderable
+    - type: javascript
+      description: "output has at least 2 === separators (3+ blocks)"
+      value: '(output.match(/===/g) || []).length >= 2'
+      weight: 3
+
+    - type: javascript
+      description: "first block is a hero"
+      value: '(() => { try { return JSON.parse(output.split("===")[0].trim()).block === "hero"; } catch(e) { return false; } })()'
+      weight: 3
+
+    - type: javascript
+      description: "hero block contains an image token"
+      value: '(() => { const first = output.split("===")[0]; return first.includes("product-image:") || first.includes("hero-image:"); })()'
+      weight: 3
+
+    - type: javascript
+      description: "suggestions present at the end"
+      value: 'output.includes("\"suggestions\"")'
+      weight: 3
+
+    # Tier 2 — Rule compliance (weight 2): model follows prompt instructions
+    - type: javascript
+      description: "no forbidden buy suggestion type"
+      value: '!/"type"\s*:\s*"buy"/.test(output)'
+      weight: 2
+
+    - type: javascript
+      description: "suggestion types are only explore or compare"
+      value: '(() => { const sugg = output.match(/"suggestions"\s*:\s*(\[[\s\S]*?\])/); if (!sugg) return true; const types = (sugg[1].match(/"type"\s*:\s*"([^"]+)"/g) || []).map(t => t.match(/"type"\s*:\s*"([^"]+)"/)[1]); return types.every(t => t === "explore" || t === "compare"); })()'
+      weight: 2
+
+    - type: javascript
+      description: "all product hrefs use real catalog paths (no invented URLs)"
+      value: '(() => { const hrefs = (output.match(/"href"\s*:\s*"([^"]+)"/g) || []).map(h => h.match(/"href"\s*:\s*"([^"]+)"/)[1]); return hrefs.every(h => h.startsWith("/products/") || h.startsWith("/experiences/") || h.startsWith("/stories/")); })()'
+      weight: 2
+
+    # Tier 3 — Visual variety (weight 1)
+    - type: javascript
+      description: "at least 2 different block types used"
+      value: '(() => { try { const blocks = output.split("===").slice(0,-1).map(s => JSON.parse(s.trim()).block); return new Set(blocks).size >= 2; } catch(e) { return false; } })()'
+      weight: 1
+
+tests:
+  - description: "cold-start: new visitor, no history"
+    threshold: 0.7
+    vars:
+      query: "show me all your espresso machines"
+      scenario_prefix: |
+        New visitor with no browsing history. Generate a discovery page.
+        This customer has no browsing history, so introduce them to the Arco range. Use {{hero-image:main}}.
+      rag_products: ""
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "product-discovery"
+    assert:
+      - type: javascript
+        description: "cold start uses hero-image:main (no specific product assumed)"
+        value: "output.split('===')[0].includes('hero-image:main')"
+        weight: 2
+
+  - description: "beginner: switching from Nespresso"
+    threshold: 0.7
+    vars:
+      query: "switching from Nespresso, what Arco machine should I get?"
+      scenario_prefix: |
+        New visitor with no browsing history. Generate a discovery page for a beginner.
+        This customer is switching from a pod/capsule machine. Be empathetic and welcoming.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Primo (primo) | $899 | home-barista, beginner, espresso
+        - Nano (nano) | $649 | beginner, travel, espresso
+        - Automatico (automatico) | $1899 | beginner, office, milk-drinks
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "beginner"
+    assert:
+      - type: javascript
+        description: "recommends a beginner-friendly machine (primo, nano, or automatico)"
+        value: "/(primo|nano|automatico)/i.test(output)"
+        weight: 2
+
+  - description: "beginner: never made espresso before"
+    threshold: 0.7
+    vars:
+      query: "I've never made espresso before, where do I start?"
+      scenario_prefix: |
+        New visitor with no browsing history. Generate a welcoming beginner discovery page.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Primo (primo) | $899 | home-barista, beginner, espresso
+        - Nano (nano) | $649 | beginner, travel, espresso
+        - Viaggio (viaggio) | $399 | travel, beginner, espresso
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "beginner"
+    assert:
+      - type: javascript
+        description: "recommends a beginner-friendly machine (primo, nano, viaggio, or automatico)"
+        value: "/(primo|nano|viaggio|automatico)/i.test(output)"
+        weight: 2
+
+  - description: "comparison: primo vs doppio"
+    threshold: 0.7
+    vars:
+      query: "primo vs doppio which is better for a home barista?"
+      scenario_prefix: |
+        New visitor explicitly requesting a comparison. Focus entirely on their comparison request.
+        Start with a hero using product-image:primo or product-image:doppio.
+        Include a comparison-table for Primo vs Doppio specifically.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Primo (primo) | $899 | home-barista, espresso, beginner
+        - Doppio (doppio) | $1599 | home-barista, milk-drinks, espresso
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "comparison"
+    assert:
+      - type: javascript
+        description: "comparison-table block present"
+        value: 'output.includes("\"block\":\"comparison-table\"") || output.includes("\"block\": \"comparison-table\"")'
+        weight: 3
+      - type: javascript
+        description: "mentions both primo and doppio"
+        value: "/primo/i.test(output) && /doppio/i.test(output)"
+        weight: 2
+
+  - description: "comparison: studio vs studio-pro"
+    threshold: 0.7
+    vars:
+      query: "what's the difference between the studio and studio-pro?"
+      scenario_prefix: |
+        New visitor explicitly requesting a comparison between Studio and Studio Pro.
+        Include a comparison-table for Studio vs Studio Pro specifically.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Studio (studio) | $2299 | home-barista, espresso, upgrade
+        - Studio Pro (studio-pro) | $3499 | home-barista, espresso, upgrade
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "comparison"
+    assert:
+      - type: javascript
+        description: "comparison-table block present"
+        value: 'output.includes("\"block\":\"comparison-table\"") || output.includes("\"block\": \"comparison-table\"")'
+        weight: 3
+      - type: javascript
+        description: "mentions both studio models"
+        value: "/studio(?!-pro)/i.test(output) && /studio-pro/i.test(output)"
+        weight: 2
+
+  - description: "product-detail: ufficio deep-dive"
+    threshold: 0.7
+    vars:
+      query: "tell me everything about the ufficio"
+      scenario_prefix: |
+        Generate a personalized recommendation page focused on the Ufficio.
+        Start with a hero using product-image:ufficio.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Ufficio (ufficio) | $4299 | office, espresso, milk-drinks
+        - Studio Pro (studio-pro) | $3499 | home-barista, espresso, upgrade
+        - Studio (studio) | $2299 | home-barista, espresso, upgrade
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "product-detail"
+    assert:
+      - type: javascript
+        description: "comparison-table block present"
+        value: 'output.includes("\"block\":\"comparison-table\"") || output.includes("\"block\": \"comparison-table\"")'
+        weight: 2
+      - type: javascript
+        description: "mentions ufficio"
+        value: "/ufficio/i.test(output)"
+        weight: 2
+
+  - description: "use-case: home office multiple users"
+    threshold: 0.7
+    vars:
+      query: "best machine for a busy home office with multiple users"
+      scenario_prefix: |
+        Generate a personalized recommendation page for a home office use case.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Ufficio (ufficio) | $4299 | office, espresso, milk-drinks
+        - Automatico (automatico) | $1899 | beginner, office, milk-drinks
+        - Doppio (doppio) | $1599 | home-barista, milk-drinks, espresso
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "espresso"
+    assert:
+      - type: javascript
+        description: "recommends office-suited machine (ufficio or automatico)"
+        value: "/(ufficio|automatico)/i.test(output)"
+        weight: 2
+
+  - description: "specs: studio pro boiler and pressure"
+    threshold: 0.7
+    vars:
+      query: "what is the boiler size and pressure rating of the studio pro?"
+      scenario_prefix: |
+        Generate a recommendation page focused on Studio Pro specs.
+        Start with a hero using product-image:studio-pro.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Studio Pro (studio-pro) | $3499 | home-barista, espresso, upgrade
+        - Studio (studio) | $2299 | home-barista, espresso, upgrade
+        - Doppio (doppio) | $1599 | home-barista, milk-drinks, espresso
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "espresso"
+    assert:
+      - type: javascript
+        description: "mentions studio-pro"
+        value: "/studio.pro|studio pro/i.test(output)"
+        weight: 2
+
+  - description: "reviews: nano customer opinions"
+    threshold: 0.7
+    vars:
+      query: "what do customers say about the nano?"
+      scenario_prefix: |
+        Generate a recommendation page featuring customer reviews of the Nano.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Nano (nano) | $649 | beginner, travel, espresso
+        - Primo (primo) | $899 | home-barista, beginner, espresso
+      rag_guides: ""
+      rag_reviews: |
+        ## Reviews (use {{review:ID}} tokens)
+        - ID: rev-nano-001 | Customer: "The Nano fits perfectly on my small counter and pulls great shots."
+        - ID: rev-nano-002 | Customer: "Heats up in 3 minutes — perfect for busy mornings."
+      intent_type: "espresso"
+    assert:
+      - type: javascript
+        description: "mentions nano"
+        value: "/nano/i.test(output)"
+        weight: 2
+
+  - description: "price: student budget"
+    threshold: 0.7
+    vars:
+      query: "I'm a student, what's the most affordable Arco espresso machine?"
+      scenario_prefix: |
+        Generate a budget-focused recommendation page. The customer is price-sensitive.
+        Use the Budget / Price Query scenario structure.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Viaggio (viaggio) | $399 | travel, beginner, espresso
+        - Nano (nano) | $649 | beginner, travel, espresso
+        - Primo (primo) | $899 | home-barista, beginner, espresso
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "budget"
+    assert:
+      - type: javascript
+        description: "mentions the most affordable options (viaggio or nano)"
+        value: "/(viaggio|nano)/i.test(output)"
+        weight: 2
+
+  - description: "recommendation: experienced barista"
+    threshold: 0.7
+    vars:
+      query: "I'm an experienced barista who dials in single origin, what should I get?"
+      scenario_prefix: |
+        Generate a personalized recommendation for an experienced home barista.
+        They want precision control. Highlight flow control and pressure profiling features.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Studio Pro (studio-pro) | $3499 | home-barista, espresso, upgrade
+        - Studio (studio) | $2299 | home-barista, espresso, upgrade
+        - Macinino Pro (macinino-pro) | $799 | espresso, home-barista, precision
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "espresso"
+    assert:
+      - type: javascript
+        description: "comparison-table block present"
+        value: 'output.includes("\"block\":\"comparison-table\"") || output.includes("\"block\": \"comparison-table\"")'
+        weight: 2
+      - type: javascript
+        description: "recommends a prosumer machine (studio or studio-pro)"
+        value: "/studio/i.test(output)"
+        weight: 2
+
+  - description: "support: machine tripping circuit breaker"
+    threshold: 0.7
+    vars:
+      query: "my primo keeps tripping the circuit breaker, help"
+      scenario_prefix: |
+        Generate a support-focused recommendation page. The customer has a product problem.
+        Use the Support / Problem Query scenario. Be empathetic and helpful.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Primo (primo) | $899 | home-barista, beginner, espresso
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "support"
+    assert:
+      - type: javascript
+        description: "mentions primo"
+        value: "/primo/i.test(output)"
+        weight: 2
+
+  - description: "gift: birthday present for coffee lover"
+    threshold: 0.7
+    vars:
+      query: "best espresso machine as a birthday gift for a coffee lover"
+      scenario_prefix: |
+        Generate a gift-focused recommendation page. The customer is buying for someone else.
+        Focus on popular, well-rounded machines that make great gifts.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Primo (primo) | $899 | home-barista, beginner, espresso
+        - Doppio (doppio) | $1599 | home-barista, milk-drinks, espresso
+        - Automatico (automatico) | $1899 | beginner, office, milk-drinks
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "gift"
+    assert:
+      - type: javascript
+        description: "recommends a gift-worthy machine (primo, doppio, or automatico)"
+        value: "/(primo|doppio|automatico)/i.test(output)"
+        weight: 2
+
+  - description: "upgrade: from primo to next level"
+    threshold: 0.7
+    vars:
+      query: "I have the primo and want to upgrade, what should I consider?"
+      scenario_prefix: |
+        Generate a personalized recommendation page for a Primo owner looking to upgrade.
+        Profile: skill-level intermediate, viewed products: primo, doppio.
+        Budget range: $1500-$2500 (from viewed products).
+
+        ## Customer Profile (from browsing behavior)
+        - Viewed products: primo, doppio
+        - Price sensitivity: mid tier
+        - Skill level: intermediate
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Doppio (doppio) | $1599 | home-barista, milk-drinks, espresso
+        - Studio (studio) | $2299 | home-barista, espresso, upgrade
+        - Macinino (macinino) | $549 | espresso, home-barista, upgrade
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "upgrade"
+    assert:
+      - type: javascript
+        description: "comparison-table block present"
+        value: 'output.includes("\"block\":\"comparison-table\"") || output.includes("\"block\": \"comparison-table\"")'
+        weight: 2
+      - type: javascript
+        description: "recommends an upgrade over primo (doppio or studio)"
+        value: "/(doppio|studio)/i.test(output)"
+        weight: 2
+
+  - description: "technique: milk steaming for latte art"
+    threshold: 0.7
+    vars:
+      query: "how do I steam milk properly for latte art?"
+      scenario_prefix: |
+        Generate a technique-focused recommendation page about milk steaming.
+        Highlight machines with good steam wands.
+      rag_products: |
+        ## Recommended Products (from RAG)
+        - Doppio (doppio) | $1599 | home-barista, milk-drinks, espresso
+        - Studio (studio) | $2299 | home-barista, espresso, upgrade
+        - Primo (primo) | $899 | home-barista, espresso, beginner
+      rag_guides: ""
+      rag_reviews: ""
+      intent_type: "milk-drinks"
+    assert:
+      - type: javascript
+        description: "recommends a machine with a good steam wand (doppio, studio, or automatico)"
+        value: "/(doppio|studio|automatico)/i.test(output)"
+        weight: 2

@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Block Inspector — Arco Benchmark</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f0f0; color: #1a1a1a; min-height: 100vh; }
+
+    /* ── Top bar ─────────────────────────────────────────────────────────── */
+    header {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 { font-size: 1rem; font-weight: 600; flex-shrink: 0; }
+    header a { color: #aaa; font-size: 0.8rem; text-decoration: none; }
+    header a:hover { color: #fff; }
+    .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex: 1; }
+    select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #2a2a2a;
+      color: #fff;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    select:focus { outline: 2px solid #60a5fa; }
+    .suite-tabs { display: flex; gap: 4px; }
+    .suite-tab {
+      padding: 5px 12px;
+      border-radius: 5px;
+      border: 1px solid #555;
+      background: transparent;
+      color: #aaa;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .suite-tab.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .badge-pass { background: #166534; color: #bbf7d0; }
+    .badge-fail { background: #7f1d1d; color: #fecaca; }
+
+    /* ── Layout ──────────────────────────────────────────────────────────── */
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      height: calc(100vh - 53px);
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────────────────────── */
+    .sidebar {
+      background: #fff;
+      border-right: 1px solid #e0e0e0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 1;
+    }
+    .model-group { border-bottom: 1px solid #f5f5f5; }
+    .model-group-header {
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #aaa;
+      background: #fafafa;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .test-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
+      font-size: 0.82rem;
+    }
+    .test-item:hover { background: #f5f5f5; }
+    .test-item.active { background: #eff6ff; border-left-color: #3b82f6; }
+    .test-item .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-pass { background: #22c55e; }
+    .dot-fail { background: #ef4444; }
+    .dot-error { background: #f59e0b; }
+    .test-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .test-item .score { font-size: 0.72rem; color: #888; flex-shrink: 0; }
+
+    /* ── Main panel ──────────────────────────────────────────────────────── */
+    .main-panel {
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .detail-header {
+      padding: 16px 24px;
+      background: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .detail-header h2 { font-size: 1rem; font-weight: 600; flex: 1; }
+    .detail-meta { font-size: 0.8rem; color: #888; margin-top: 2px; }
+    .view-tabs {
+      display: flex;
+      gap: 1px;
+      background: #f0f0f0;
+      border-radius: 6px;
+      padding: 2px;
+    }
+    .view-tab {
+      padding: 5px 14px;
+      border-radius: 5px;
+      border: none;
+      background: transparent;
+      font-size: 0.82rem;
+      cursor: pointer;
+      color: #666;
+    }
+    .view-tab.active { background: #fff; color: #1a1a1a; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+    /* ── Views ───────────────────────────────────────────────────────────── */
+    .view { display: none; flex: 1; }
+    .view.active { display: block; }
+
+    /* Raw view */
+    .raw-view { padding: 16px 24px; }
+    .raw-section { margin-bottom: 12px; }
+    .raw-section h3 { font-size: 0.75rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    pre {
+      background: #1c2b35;
+      color: #e8e8e8;
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      padding: 12px 16px;
+      border-radius: 6px;
+    }
+
+    /* Blocks list view */
+    .blocks-view { padding: 16px 24px; }
+    .block-card { background: #fff; border-radius: 8px; margin-bottom: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
+    .block-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: #f8f8f8;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+    .block-type-tag {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-family: ui-monospace, monospace;
+    }
+    .block-card-json { display: none; padding: 0; }
+    .block-card-json.open { display: block; }
+    .block-card-json pre { border-radius: 0; }
+
+    /* Visual preview view */
+    .visual-view { padding: 0; }
+    .preview-loading { padding: 40px 24px; color: #888; font-size: 0.9rem; }
+    .preview-error { padding: 24px; color: #dc2626; font-size: 0.85rem; background: #fff5f5; border-radius: 8px; margin: 16px 24px; }
+
+    /* The arco preview stage — iframe approach so arco styles don't leak */
+    .preview-frame {
+      width: 100%;
+      border: none;
+      min-height: 600px;
+      flex: 1;
+    }
+
+    /* Assertions view */
+    .assertions-view { padding: 16px 24px; }
+    .assertion-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      font-size: 0.83rem;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+    }
+    .assertion-row.pass { border-left: 3px solid #22c55e; }
+    .assertion-row.fail { border-left: 3px solid #ef4444; background: #fff5f5; }
+    .assertion-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .assertion-desc { flex: 1; }
+    .assertion-reason { font-size: 0.75rem; color: #888; margin-top: 3px; }
+    .assertion-reason.fail-reason { color: #dc2626; }
+
+    /* Empty state */
+    .empty { padding: 60px 24px; text-align: center; color: #888; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Block Inspector</h1>
+  <a href="index.html">← Benchmark</a>
+  <div class="controls">
+    <div class="suite-tabs">
+      <button class="suite-tab active" data-suite="recommender">Recommender</button>
+      <button class="suite-tab" data-suite="reasoning">Reasoning</button>
+      <button class="suite-tab" data-suite="classification">Classification</button>
+    </div>
+    <select id="model-select"><option>Loading…</option></select>
+    <select id="test-select"><option>Loading…</option></select>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-header">Results</div>
+    <div id="sidebar-list"><div class="empty">Select a suite and model above</div></div>
+  </div>
+
+  <div class="main-panel" id="main-panel">
+    <div class="empty" style="margin: auto;">Select a result to inspect</div>
+  </div>
+</div>
+
+<script type="module">
+  // ── Inline sectionToHtml (from arco/workers/recommender/src/json-to-eds.js) ──
+
+  function escHtmlStr(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function toSafeClass(str) {
+    return String(str).toLowerCase().replace(/[^a-z0-9-]/g, '');
+  }
+
+  function contentItemToHtml(item) {
+    if (!item || !item.type) return '';
+    switch (item.type) {
+      case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6':
+        return `<${item.type}>${escHtmlStr(item.text)}</${item.type}>`;
+      case 'p': return `<p>${escHtmlStr(item.text)}</p>`;
+      case 'image': return item.token || '';
+      case 'token': return item.value || '';
+      case 'link': {
+        const href = escHtmlStr(item.href || '#');
+        const text = escHtmlStr(item.text);
+        const a = `<a href="${href}">${text}</a>`;
+        if (item.style === 'primary') return `<p><strong>${a}</strong></p>`;
+        if (item.style === 'accent') return `<p><strong><em>${a}</em></strong></p>`;
+        if (item.style === 'text') return `<p><em>${a}</em></p>`;
+        return `<p>${a}</p>`;
+      }
+      case 'ul': return Array.isArray(item.items) ? `<ul>${item.items.map(li => `<li>${escHtmlStr(li)}</li>`).join('')}</ul>` : '';
+      case 'ol': return Array.isArray(item.items) ? `<ol>${item.items.map(li => `<li>${escHtmlStr(li)}</li>`).join('')}</ol>` : '';
+      case 'blockquote': {
+        let bq = `<blockquote><p>${escHtmlStr(item.text)}</p>`;
+        if (item.attribution) bq += `<p><strong>${escHtmlStr(item.attribution)}</strong></p>`;
+        return bq + '</blockquote>';
+      }
+      case 'strong': return `<p><strong>${escHtmlStr(item.text)}</strong></p>`;
+      case 'hr': return '<hr>';
+      default: return item.text ? `<p>${escHtmlStr(item.text)}</p>` : '';
+    }
+  }
+
+  function cellToHtml(cell) {
+    if (cell && !Array.isArray(cell) && cell.type) return contentItemToHtml(cell);
+    if (!Array.isArray(cell)) return '';
+    return cell.map(contentItemToHtml).join('\n');
+  }
+
+  function sectionToHtml(section) {
+    if (!section || !section.block) return '';
+    const blockName = toSafeClass(section.block);
+    const variants = Array.isArray(section.variants) ? section.variants.map(toSafeClass).filter(Boolean) : [];
+    const className = [blockName, ...variants].join(' ');
+    const dataAttrs = section.data
+      ? Object.entries(section.data).filter(([, v]) => v != null && v !== '')
+          .map(([k, v]) => ` data-${toSafeClass(k)}="${String(v).replace(/"/g, '&quot;')}"`)
+          .join('')
+      : '';
+
+    let html = `<div class="${className}"${dataAttrs}>`;
+    if (Array.isArray(section.rows)) {
+      section.rows.forEach(row => {
+        if (!Array.isArray(row)) return;
+        if (row.length === 1 && row[0].length === 1 && row[0][0]?.type === 'token') {
+          html += `\n  ${row[0][0].value || ''}`;
+          return;
+        }
+        html += '\n  <div>';
+        row.forEach(cell => { html += `\n    <div>${cellToHtml(cell)}</div>`; });
+        html += '\n  </div>';
+      });
+    }
+    html += '\n</div>';
+    if (section.meta?.style) {
+      html += `\n<div class="section-metadata">\n  <div><div>style</div><div>${escHtmlStr(section.meta.style)}</div></div>\n</div>`;
+    }
+    return html;
+  }
+
+  // ── Parse model output into blocks array ────────────────────────────────────
+
+  const BLOCK_ALIASES = {
+    'use-case-cards': 'cards',
+    'feature-highlights': 'cards',
+    text: false,
+    'how-to-steps': 'recipe-steps',
+  };
+
+  function parseBlocks(rawOutput) {
+    if (!rawOutput || rawOutput === '[]') return [];
+    // The transform in defaultTest.options.transform already runs and turns
+    // the output into parsed JSON. But since we're working with stored results
+    // the output field is already the transformed string (a JSON object with
+    // "blocks" key for reasoning, or raw EDS blocks for recommender).
+    // Try to detect which format we have.
+    try {
+      const parsed = JSON.parse(rawOutput);
+      // Reasoning/classification format: { blocks: [...], reasoning: "..." }
+      if (parsed && Array.isArray(parsed.blocks)) return parsed.blocks;
+      // Already a single block object?
+      if (parsed && parsed.block) return [parsed];
+    } catch (_) { /* not JSON, fall through */ }
+
+    // Recommender format: JSON objects separated by ===
+    const segments = rawOutput.split(/\n===\n|^===$/m).map(s => s.trim()).filter(Boolean);
+    const blocks = [];
+    for (const seg of segments) {
+      // Skip the follow-up suggestions JSON (ends the recommender output)
+      try {
+        const obj = JSON.parse(seg);
+        if (obj && obj.block) blocks.push(obj);
+        // suggestions array (follow-up) — skip silently
+      } catch (_) { /* skip unparseable segments */ }
+    }
+    return blocks;
+  }
+
+  // ── Generate iframe srcdoc for visual preview ────────────────────────────────
+
+  function buildPreviewDoc(blocks) {
+    const arcoBase = '/arco';
+    const sectionsHtml = blocks.map(block => {
+      const alias = BLOCK_ALIASES[block.block];
+      const resolvedBlock = alias === false ? { ...block, block: 'text' } : alias ? { ...block, block: alias } : block;
+      const html = sectionToHtml(resolvedBlock);
+      return `<div class="section" data-section-status="initialized">${html}</div>`;
+    }).join('\n');
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="${arcoBase}/styles/styles.css">
+  <link rel="stylesheet" href="${arcoBase}/styles/fonts.css">
+  <style>
+    /* Collapse unresolved token placeholders (no images loaded in preview) */
+    .hero .block > div > div:first-child:not(:has(picture)) {
+      min-height: 200px;
+      background: linear-gradient(135deg, #e8e0d4 0%, #d4cfc5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+    }
+    .hero .block > div > div:first-child:not(:has(picture))::after {
+      content: '(image placeholder)';
+      color: #888;
+      font-size: 0.8rem;
+      font-style: italic;
+    }
+    /* Prevent hero from claiming full viewport when image is missing */
+    .hero-container .hero { min-height: auto !important; }
+    .hero-container .hero > div { min-height: auto !important; }
+    /* Token text should show as placeholders, not giant text */
+    p:only-child { overflow-wrap: anywhere; }
+  </style>
+  <script>
+    window.hlx = window.hlx || {};
+    window.hlx.codeBasePath = '${arcoBase}';
+    window.hlx.rum = { firstReadTime: Date.now(), collector: true };
+  <\/script>
+</head>
+<body>
+  <main>
+    ${sectionsHtml}
+  </main>
+  <script type="module">
+    import { decorateBlock, decorateButtons, decorateIcons, loadBlock } from '${arcoBase}/scripts/aem.js';
+    import { processSectionMetadata } from '${arcoBase}/scripts/section-metadata.js';
+    import { BLOCK_ALIASES } from '${arcoBase}/scripts/block-aliases.js';
+
+    // Override codeBasePath after aem.js setup() resets it
+    window.hlx.codeBasePath = '${arcoBase}';
+    // Show body (arco styles.css hides it until scripts add .appear)
+    document.body.classList.add('appear');
+
+    // ── Token resolution (ported from arco/workers/recommender/src/images.js) ──
+    const ARCO_CDN = 'https://main--arco--froesef.aem.live';
+    const HERO_MAIN_IMAGE = '/media_1f7e12f4bd38e8ecf4fdc73dc84ebd9a5fd516521.jpg';
+
+    async function fetchJson(path) {
+      try { const r = await fetch(path); return r.ok ? (await r.json()).data || [] : []; }
+      catch { return []; }
+    }
+
+    const [products, recipes, reviews, accessories, stories, experiences] = await Promise.all([
+      fetchJson('${arcoBase}/content/products/products.json'),
+      fetchJson('${arcoBase}/content/recipes/recipes.json'),
+      fetchJson('${arcoBase}/content/metadata/reviews.json'),
+      fetchJson('${arcoBase}/content/accessories/accessories.json'),
+      fetchJson('${arcoBase}/content/stories-index.json'),
+      fetchJson('${arcoBase}/content/experiences-index.json'),
+    ]);
+
+    const productsMap = new Map(products.map(p => [p.id, p]));
+    const recipesMap = new Map(); // name-based lookup below
+    const reviewsMap = new Map(reviews.map(r => [r.id, r]));
+    const accessoriesMap = new Map(accessories.map(a => [a.id, a]));
+    const storiesMap = new Map(stories.map(s => [s.slug, s]));
+    const experiencesMap = new Map(experiences.map(e => [e.slug, e]));
+
+    function absUrl(url) {
+      if (!url) return '';
+      return url.startsWith('http') ? url : ARCO_CDN + (url.startsWith('/') ? '' : '/') + url;
+    }
+    function prodImg(id) { const p = productsMap.get(id); return p ? absUrl(p.images?.[0] || p.image || '') : ''; }
+    function accImg(id) { const a = accessoriesMap.get(id); return a ? absUrl(a.images?.[0] || a.image || '') : ''; }
+    function findRecipe(name) {
+      const l = name.toLowerCase();
+      return recipes.find(r => (r.name||'').toLowerCase() === l) || recipes.find(r => (r.name||'').toLowerCase().includes(l));
+    }
+    function pic(src, alt) { return src ? '<picture><img src="' + src + '" alt="' + (alt||'') + '"></picture>' : ''; }
+
+    function resolveTokens(html) {
+      return html
+        .replace(/\{\{product-image:([^}]+)\}\}/g, (_, id) => { const url = prodImg(id.trim()); const p = productsMap.get(id.trim()); return url ? pic(url, p?.name) : ''; })
+        .replace(/\{\{product-link:([^}]+)\}\}/g, (_, id) => { const p = productsMap.get(id.trim()); return p ? '<a href="' + (p.url||'#') + '">' + p.name + '</a>' : id; })
+        .replace(/\{\{product:([^}]+)\}\}/g, (_, id) => { const p = productsMap.get(id.trim()); if (!p) return ''; const img = prodImg(id.trim()); return '<div><div>' + pic(img, p.name) + '</div><div><p><strong>' + p.name + '</strong></p><p>$' + (p.price||'') + '</p><p>' + (p.tagline||'') + '</p><p><a href="' + (p.url||'#') + '">View Details</a></p></div></div>'; })
+        .replace(/\{\{recipe-image:([^}]+)\}\}/g, (_, name) => { const r = findRecipe(name.trim()); return r ? pic(absUrl(r.image||r.imageUrl||''), r.name) : ''; })
+        .replace(/\{\{recipe-link:([^}]+)\}\}/g, (_, name) => { const r = findRecipe(name.trim()); return r ? '<a href="' + (r.url||'#') + '">' + r.name + '</a>' : name; })
+        .replace(/\{\{recipe:([^}]+)\}\}/g, (_, name) => { const r = findRecipe(name.trim()); if (!r) return ''; return '<div><div>' + pic(absUrl(r.image||r.imageUrl||''), r.name) + '</div><div><p><strong>' + r.name + '</strong></p><p>' + (r.description||'').slice(0,120) + '</p><p><a href="' + (r.url||'#') + '">View Recipe</a></p></div></div>'; })
+        .replace(/\{\{review:([^}]+)\}\}/g, (_, id) => { const r = reviewsMap.get(id.trim()); return r ? '<blockquote><p>' + (r.content||r.body||'') + '</p><p><strong>' + (r.author||'Customer') + '</strong></p></blockquote>' : ''; })
+        .replace(/\{\{accessory-image:([^}]+)\}\}/g, (_, id) => { const url = accImg(id.trim()); const a = accessoriesMap.get(id.trim()); return url ? pic(url, a?.name) : ''; })
+        .replace(/\{\{accessory:([^}]+)\}\}/g, (_, id) => { const a = accessoriesMap.get(id.trim()); if (!a) return ''; return '<div><div>' + pic(accImg(id.trim()), a.name) + '</div><div><p><strong>' + a.name + '</strong></p><p>$' + (a.price||'') + '</p><p><a href="' + (a.url||'#') + '">View Details</a></p></div></div>'; })
+        .replace(/\{\{story:([^}]+)\}\}/g, (_, slug) => { const s = storiesMap.get(slug.trim()); if (!s) return ''; const img = s.image ? absUrl(s.image) : (s.related_products?.[0] ? prodImg(s.related_products[0]) : ''); return '<div>' + (img ? '<div>' + pic(img, s.title) + '</div>' : '') + '<div><h3>' + s.title + '</h3><p>' + (s.excerpt||'') + '</p><p><a href="' + (s.url||'#') + '">Read Article</a></p></div></div>'; })
+        .replace(/\{\{experience:([^}]+)\}\}/g, (_, slug) => { const e = experiencesMap.get(slug.trim()); if (!e) return ''; const img = e.image ? absUrl(e.image) : (e.anchor_product ? prodImg(e.anchor_product) : ''); return '<div>' + (img ? '<div>' + pic(img, e.title) + '</div>' : '') + '<div><h3>' + (e.hero_headline||e.title) + '</h3><p>' + (e.excerpt||'') + '</p><p><a href="' + (e.url||'#') + '">Explore</a></p></div></div>'; })
+        .replace(/\{\{hero-image:main\}\}/g, () => pic(absUrl(HERO_MAIN_IMAGE), 'Arco espresso machine'));
+    }
+
+    // ── Resolve tokens in all sections, then decorate blocks ──
+    const main = document.querySelector('main');
+    for (const section of main.querySelectorAll('.section')) {
+      section.innerHTML = resolveTokens(section.innerHTML);
+    }
+
+    for (const section of main.querySelectorAll('.section')) {
+      processSectionMetadata(section);
+      const blockEl = section.querySelector('[class]');
+      if (blockEl) {
+        const origName = blockEl.classList[0];
+        const alias = origName in BLOCK_ALIASES ? BLOCK_ALIASES[origName] : origName;
+        if (alias === false) {
+          blockEl.replaceWith(...blockEl.children);
+        } else {
+          const blockName = alias;
+          if (blockName !== origName) blockEl.classList.replace(origName, blockName);
+          const wrapper = document.createElement('div');
+          wrapper.className = blockName + '-wrapper';
+          blockEl.parentNode.insertBefore(wrapper, blockEl);
+          wrapper.appendChild(blockEl);
+          decorateBlock(blockEl);
+          section.classList.add(blockName + '-container');
+        }
+      }
+      decorateButtons(section);
+      decorateIcons(section);
+      const block = section.querySelector('.block');
+      if (block) {
+        try { await loadBlock(block); } catch(e) { console.warn('loadBlock failed', e); }
+      }
+      section.dataset.sectionStatus = 'loaded';
+    }
+
+    // Auto-resize iframe
+    const ro = new ResizeObserver(() => {
+      window.parent.postMessage({ type: 'resize', height: document.body.scrollHeight }, '*');
+    });
+    ro.observe(document.body);
+  <\/script>
+</body>
+</html>`;
+  }
+
+  // ── State ────────────────────────────────────────────────────────────────────
+
+  const state = {
+    suite: 'recommender',
+    data: {},       // suite → raw JSON data
+    model: null,
+    testIdx: null,
+    view: 'visual', // visual | blocks | raw | assertions
+  };
+
+  // ── Data loading ─────────────────────────────────────────────────────────────
+
+  async function loadSuite(suite) {
+    if (state.data[suite]) return state.data[suite];
+    const files = {
+      recommender: 'results/recommender.json',
+      reasoning: 'results/reasoning.json',
+      classification: 'results/classification.json',
+    };
+    const res = await fetch(files[suite]);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    state.data[suite] = data;
+    return data;
+  }
+
+  function getResults(suite) {
+    return state.data[suite]?.results?.results || [];
+  }
+
+  function getModels(suite) {
+    const results = getResults(suite);
+    const labels = [...new Set(results.map(r => r.provider?.label || r.provider?.id))].sort();
+    return labels;
+  }
+
+  function getTestsForModel(suite, model) {
+    return getResults(suite).filter(r => (r.provider?.label || r.provider?.id) === model);
+  }
+
+  // ── Rendering ────────────────────────────────────────────────────────────────
+
+  function esc(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function renderSidebar(suite, model) {
+    const list = document.getElementById('sidebar-list');
+    if (!model) { list.innerHTML = '<div class="empty">Select a model</div>'; return; }
+    const rows = getTestsForModel(suite, model);
+    if (!rows.length) { list.innerHTML = '<div class="empty">No results</div>'; return; }
+
+    list.innerHTML = rows.map((r, i) => {
+      const desc = r.testCase?.description || r.vars?.query || `Test ${i}`;
+      const dotClass = r.error ? 'dot-error' : r.success ? 'dot-pass' : 'dot-fail';
+      const score = r.score != null ? `${(r.score * 100).toFixed(0)}%` : '';
+      const active = state.testIdx === i ? ' active' : '';
+      return `<div class="test-item${active}" data-idx="${i}">
+        <div class="dot ${dotClass}"></div>
+        <span class="name" title="${esc(desc)}">${esc(desc)}</span>
+        <span class="score">${esc(score)}</span>
+      </div>`;
+    }).join('');
+
+    list.querySelectorAll('.test-item').forEach(el => {
+      el.addEventListener('click', () => selectResult(parseInt(el.dataset.idx, 10)));
+    });
+  }
+
+  function renderModelSelect(suite) {
+    const sel = document.getElementById('model-select');
+    const models = getModels(suite);
+    sel.innerHTML = models.map(m => `<option value="${esc(m)}"${m === state.model ? ' selected' : ''}>${esc(m)}</option>`).join('');
+    if (!state.model || !models.includes(state.model)) state.model = models[0] || null;
+    sel.value = state.model || '';
+  }
+
+  function renderTestSelect(suite, model) {
+    const sel = document.getElementById('test-select');
+    const rows = getTestsForModel(suite, model);
+    sel.innerHTML = rows.map((r, i) => {
+      const desc = r.testCase?.description || r.vars?.query || `Test ${i}`;
+      return `<option value="${i}"${i === state.testIdx ? ' selected' : ''}>${esc(desc)}</option>`;
+    }).join('');
+    if (state.testIdx == null) state.testIdx = 0;
+    sel.value = state.testIdx ?? 0;
+  }
+
+  function selectResult(idx) {
+    state.testIdx = idx;
+    const rows = getTestsForModel(state.suite, state.model);
+    const row = rows[idx];
+    if (!row) return;
+
+    // Update sidebar highlight
+    document.querySelectorAll('.test-item').forEach((el, i) => el.classList.toggle('active', i === idx));
+    document.getElementById('test-select').value = idx;
+
+    renderDetail(row);
+  }
+
+  let currentIframe = null;
+
+  function renderDetail(row) {
+    const panel = document.getElementById('main-panel');
+    const rawOutput = row.response?.output ?? row.output ?? '';
+    const blocks = parseBlocks(rawOutput);
+    const desc = row.testCase?.description || row.vars?.query || 'Result';
+    const model = row.provider?.label || row.provider?.id || '';
+    const success = row.success;
+    const score = row.score != null ? `${(row.score * 100).toFixed(0)}%` : '—';
+    const latency = row.latencyMs ? `${(row.latencyMs / 1000).toFixed(1)}s` : '';
+    const statusBadge = row.error
+      ? '<span class="badge badge-fail">ERROR</span>'
+      : success
+        ? '<span class="badge badge-pass">PASS</span>'
+        : '<span class="badge badge-fail">FAIL</span>';
+
+    panel.innerHTML = `
+      <div class="detail-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <h2>${esc(desc)}</h2>
+            ${statusBadge}
+          </div>
+          <div class="detail-meta">${esc(model)} · score ${esc(score)}${latency ? ` · ${esc(latency)}` : ''} · ${blocks.length} block${blocks.length !== 1 ? 's' : ''}</div>
+        </div>
+        <div class="view-tabs">
+          <button class="view-tab ${state.view === 'visual' ? 'active' : ''}" data-view="visual">Visual</button>
+          <button class="view-tab ${state.view === 'blocks' ? 'active' : ''}" data-view="blocks">Blocks</button>
+          <button class="view-tab ${state.view === 'raw' ? 'active' : ''}" data-view="raw">Raw</button>
+          <button class="view-tab ${state.view === 'assertions' ? 'active' : ''}" data-view="assertions">Assertions</button>
+        </div>
+      </div>
+      <div id="view-visual" class="view visual-view ${state.view === 'visual' ? 'active' : ''}"></div>
+      <div id="view-blocks" class="view blocks-view ${state.view === 'blocks' ? 'active' : ''}"></div>
+      <div id="view-raw" class="view raw-view ${state.view === 'raw' ? 'active' : ''}"></div>
+      <div id="view-assertions" class="view assertions-view ${state.view === 'assertions' ? 'active' : ''}"></div>
+    `;
+
+    panel.querySelectorAll('.view-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.view = btn.dataset.view;
+        panel.querySelectorAll('.view-tab').forEach(b => b.classList.toggle('active', b === btn));
+        panel.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === `view-${state.view}`));
+        if (state.view === 'visual') renderVisual(blocks, row);
+        if (state.view === 'blocks') renderBlocksView(blocks);
+        if (state.view === 'raw') renderRawView(rawOutput, row);
+        if (state.view === 'assertions') renderAssertions(row);
+      });
+    });
+
+    if (state.view === 'visual') renderVisual(blocks, row);
+    if (state.view === 'blocks') renderBlocksView(blocks);
+    if (state.view === 'raw') renderRawView(rawOutput, row);
+    if (state.view === 'assertions') renderAssertions(row);
+  }
+
+  function renderVisual(blocks, row) {
+    const container = document.getElementById('view-visual');
+    if (!blocks.length) {
+      const rawOutput = row.response?.output ?? row.output ?? '';
+      const errMsg = row.error || 'No blocks parsed from output.';
+      container.innerHTML = `<div class="preview-error">${esc(errMsg)}<br><br><small>Raw output: ${esc(String(rawOutput).slice(0, 300))}</small></div>`;
+      return;
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.className = 'preview-frame';
+    iframe.sandbox = 'allow-scripts allow-same-origin';
+    container.innerHTML = '';
+    container.appendChild(iframe);
+    currentIframe = iframe;
+
+    const srcdoc = buildPreviewDoc(blocks);
+    iframe.srcdoc = srcdoc;
+
+    window.addEventListener('message', function onMsg(e) {
+      if (e.data?.type === 'resize' && iframe === currentIframe) {
+        iframe.style.height = (e.data.height + 32) + 'px';
+      }
+    });
+  }
+
+  function renderBlocksView(blocks) {
+    const container = document.getElementById('view-blocks');
+    if (!blocks.length) {
+      container.innerHTML = '<div class="empty">No blocks to show</div>';
+      return;
+    }
+    container.innerHTML = blocks.map((block, i) => `
+      <div class="block-card">
+        <div class="block-card-header" data-idx="${i}">
+          <span class="block-type-tag">${esc(block.block)}</span>
+          <span style="font-size:0.8rem;color:#666">${Array.isArray(block.rows) ? block.rows.length + ' row' + (block.rows.length !== 1 ? 's' : '') : ''}</span>
+          <span style="margin-left:auto;font-size:0.75rem;color:#aaa">▼</span>
+        </div>
+        <div class="block-card-json" id="block-json-${i}">
+          <pre>${esc(JSON.stringify(block, null, 2))}</pre>
+        </div>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.block-card-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const json = document.getElementById(`block-json-${header.dataset.idx}`);
+        json.classList.toggle('open');
+        header.querySelector('span:last-child').textContent = json.classList.contains('open') ? '▲' : '▼';
+      });
+    });
+  }
+
+  function renderRawView(rawOutput, row) {
+    const container = document.getElementById('view-raw');
+    const query = row.vars?.query || row.testCase?.vars?.query || '';
+    container.innerHTML = `
+      ${query ? `<div class="raw-section"><h3>Query</h3><pre>${esc(query)}</pre></div>` : ''}
+      <div class="raw-section"><h3>Model Output</h3><pre>${esc(rawOutput || '(empty)')}</pre></div>
+      ${row.error ? `<div class="raw-section"><h3>Error</h3><pre style="background:#3b0a0a;color:#fca5a5">${esc(row.error)}</pre></div>` : ''}
+    `;
+  }
+
+  function renderAssertions(row) {
+    const container = document.getElementById('view-assertions');
+    const components = row.gradingResult?.componentResults || [];
+    if (!components.length) {
+      container.innerHTML = '<div class="empty">No assertion details available</div>';
+      return;
+    }
+    container.innerHTML = components.map(c => {
+      const cls = c.pass ? 'pass' : 'fail';
+      const icon = c.pass ? '✓' : '✗';
+      const desc = c.assertion?.description || c.assertion?.type || '—';
+      const reason = !c.pass ? (c.reason?.split('\nStack Trace:')[0]?.split('\n')[0] || '') : '';
+      const weight = c.assertion?.weight != null ? ` <small style="color:#aaa">weight ${c.assertion.weight}</small>` : '';
+      return `<div class="assertion-row ${cls}">
+        <span class="assertion-icon">${icon}</span>
+        <div class="assertion-desc">
+          ${esc(desc)}${weight}
+          ${reason ? `<div class="assertion-reason fail-reason">${esc(reason)}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Event wiring ─────────────────────────────────────────────────────────────
+
+  async function switchSuite(suite) {
+    state.suite = suite;
+    document.querySelectorAll('.suite-tab').forEach(t => t.classList.toggle('active', t.dataset.suite === suite));
+    try {
+      await loadSuite(suite);
+    } catch (e) {
+      document.getElementById('sidebar-list').innerHTML = `<div class="empty" style="color:#dc2626">Failed to load ${suite}.json: ${esc(e.message)}</div>`;
+      return;
+    }
+    renderModelSelect(suite);
+    state.testIdx = 0;
+    renderSidebar(suite, state.model);
+    renderTestSelect(suite, state.model);
+    if (state.model) selectResult(0);
+  }
+
+  document.querySelectorAll('.suite-tab').forEach(btn => {
+    btn.addEventListener('click', () => switchSuite(btn.dataset.suite));
+  });
+
+  document.getElementById('model-select').addEventListener('change', e => {
+    state.model = e.target.value;
+    state.testIdx = 0;
+    renderSidebar(state.suite, state.model);
+    renderTestSelect(state.suite, state.model);
+    selectResult(0);
+  });
+
+  document.getElementById('test-select').addEventListener('change', e => {
+    selectResult(parseInt(e.target.value, 10));
+  });
+
+  // ── Boot ─────────────────────────────────────────────────────────────────────
+  await switchSuite('recommender');
+</script>
+</body>
+</html>

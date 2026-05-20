@@ -1,0 +1,262 @@
+/* Product Detail — two-column layout, gallery, specs, warm accent palette */
+.product-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ---------- Gallery (left column) ---------- */
+.product-detail .product-detail-gallery {
+  width: 100%;
+}
+
+.product-detail .product-detail-main-image {
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  background-color: var(--light-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.product-detail .product-detail-main-image picture {
+  display: block;
+  line-height: 0;
+}
+
+.product-detail .product-detail-main-image img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+
+/* Thumbnail strip */
+.product-detail .product-detail-thumbnails {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+.product-detail .product-detail-thumbnail {
+  flex: 0 0 auto;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  margin: 0;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--light-color);
+  box-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.product-detail .product-detail-thumbnail:hover {
+  border-color: var(--accent-secondary);
+  box-shadow: var(--shadow-sm);
+  transform: none;
+  background: var(--light-color);
+}
+
+.product-detail .product-detail-thumbnail.active {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-color);
+  background: var(--light-color);
+}
+
+.product-detail .product-detail-thumbnail picture {
+  display: block;
+  line-height: 0;
+}
+
+.product-detail .product-detail-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- Info panel (right column) ---------- */
+.product-detail .product-detail-info {
+  width: 100%;
+}
+
+.product-detail .product-detail-category {
+  display: inline-block;
+  font-size: var(--body-font-size-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted-color);
+  margin-bottom: 8px;
+}
+
+.product-detail .product-detail-name {
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size-xl);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.product-detail .product-detail-price {
+  font-size: var(--heading-font-size-l);
+  font-weight: 600;
+  color: var(--accent-color);
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+.product-detail .product-detail-description {
+  font-size: var(--body-font-size-s);
+  line-height: 1.75;
+  color: var(--dark-color);
+  margin-top: 0;
+  margin-bottom: 32px;
+}
+
+/* ---------- Variant selector ---------- */
+.product-detail .product-detail-variants {
+  margin-bottom: 32px;
+}
+
+.product-detail .product-detail-variants-label {
+  display: block;
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-color);
+  margin-bottom: 12px;
+}
+
+.product-detail .product-detail-variant-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.product-detail .product-detail-variant-btn {
+  padding: 0.5em 1.4em;
+  border: 1.5px solid var(--border-color);
+  border-radius: 100px;
+  background-color: transparent;
+  color: var(--text-color);
+  font-size: var(--body-font-size-xs);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  box-shadow: none;
+  transition: border-color var(--transition), background-color var(--transition), color var(--transition);
+}
+
+.product-detail .product-detail-variant-btn:hover {
+  border-color: var(--accent-secondary);
+  color: var(--accent-color);
+  background-color: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.product-detail .product-detail-variant-btn.active {
+  border-color: var(--accent-color);
+  background-color: var(--accent-color);
+  color: var(--light-color);
+}
+
+.product-detail .product-detail-variant-btn.active:hover {
+  background-color: var(--link-hover-color);
+  border-color: var(--link-hover-color);
+  color: var(--light-color);
+}
+
+/* ---------- Specs table ---------- */
+.product-detail .product-detail-specs {
+  margin-bottom: 16px;
+}
+
+.product-detail .product-detail-specs h3 {
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size-s);
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: var(--text-color);
+}
+
+.product-detail .product-detail-specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--body-font-size-xs);
+}
+
+.product-detail .product-detail-specs-table tbody tr {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.product-detail .product-detail-specs-table tbody tr:nth-child(even) {
+  background-color: rgb(226 213 197 / 15%);
+}
+
+.product-detail .product-detail-specs-table th,
+.product-detail .product-detail-specs-table td {
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.product-detail .product-detail-specs-table th {
+  font-weight: 600;
+  color: var(--text-color);
+  white-space: nowrap;
+  width: 40%;
+}
+
+.product-detail .product-detail-specs-table td {
+  color: var(--dark-color);
+}
+
+/* ---------- Desktop: two-column layout ---------- */
+@media (width >= 900px) {
+  .product-detail {
+    flex-direction: row;
+    gap: 48px;
+    align-items: flex-start;
+  }
+
+  .product-detail .product-detail-gallery {
+    flex: 0 0 60%;
+    max-width: 60%;
+  }
+
+  .product-detail .product-detail-info {
+    flex: 0 0 calc(40% - 48px);
+    max-width: calc(40% - 48px);
+    position: sticky;
+    top: calc(var(--nav-height) + 24px);
+  }
+
+  .product-detail .product-detail-thumbnail {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* ---------- Large desktop refinements ---------- */
+@media (width >= 1200px) {
+  .product-detail .product-detail-name {
+    font-size: var(--heading-font-size-xxl);
+  }
+
+  .product-detail .product-detail-thumbnail {
+    width: 88px;
+    height: 88px;
+  }
+}
