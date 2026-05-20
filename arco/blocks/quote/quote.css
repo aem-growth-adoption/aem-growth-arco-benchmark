@@ -1,0 +1,86 @@
+/* Quote — large italic serif, accent left border, decorative mark */
+.quote blockquote {
+  margin: 0 auto;
+  padding: 0 24px;
+  max-width: 960px;
+  position: relative;
+}
+
+@media (width >= 900px) {
+  .quote blockquote {
+    padding: 0 32px;
+  }
+}
+
+.quote blockquote .quote-quotation {
+  font-family: var(--heading-font-family);
+  font-size: clamp(1.5rem, 3.5vw, 2.75rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--text-color);
+  border-left: 2px solid var(--accent-color);
+  padding-left: 32px;
+}
+
+@media (width >= 900px) {
+  .quote blockquote .quote-quotation {
+    padding-left: 48px;
+  }
+}
+
+.quote blockquote .quote-quotation > :first-child {
+  text-indent: 0;
+}
+
+.quote blockquote .quote-quotation > :first-child::before,
+.quote blockquote .quote-quotation > :last-child::after {
+  display: none;
+}
+
+.quote blockquote .quote-attribution {
+  text-align: left;
+  margin-top: 2em;
+  padding-left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: var(--body-font-size-s);
+}
+
+@media (width >= 900px) {
+  .quote blockquote .quote-attribution {
+    padding-left: 48px;
+  }
+}
+
+.quote blockquote .quote-attribution::before {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 1px;
+  background-color: var(--accent-color);
+  flex-shrink: 0;
+}
+
+.quote blockquote .quote-attribution > :first-child::before {
+  content: none;
+}
+
+.quote blockquote .quote-attribution > :first-child {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: var(--body-font-size-xs);
+  color: var(--text-color);
+}
+
+.quote blockquote .quote-attribution img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+  margin-right: 12px;
+}

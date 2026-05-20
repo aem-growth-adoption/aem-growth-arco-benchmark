@@ -1,0 +1,45 @@
+/* Columns — generous gap, rounded images with soft shadow, comfortable reading */
+.columns > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.columns img {
+  width: 100%;
+  border-radius: var(--card-radius, 12px);
+  box-shadow: var(--shadow-lg);
+}
+
+.columns > div > div {
+  order: 1;
+}
+
+.columns > div > div p {
+  line-height: 1.75;
+  color: var(--dark-color);
+}
+
+.columns > div > .columns-img-col {
+  order: 0;
+}
+
+.columns > div > .columns-img-col img {
+  display: block;
+}
+
+.columns > div > .columns-img-col p + p {
+  margin-top: 16px;
+}
+
+@media (width >= 900px) {
+  .columns > div {
+    align-items: center;
+    flex-direction: unset;
+    gap: 48px;
+  }
+
+  .columns > div > div {
+    flex: 1;
+    order: unset;
+  }
+}

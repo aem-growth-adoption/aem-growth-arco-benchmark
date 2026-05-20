@@ -1,0 +1,136 @@
+/* Hero — full viewport, warm gradient overlay, elegant serif display */
+.hero-container .hero-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.hero-container {
+  margin: 0;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  padding: 80px 24px;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgb(245 240 232 / 85%) 0%,
+    rgb(245 240 232 / 40%) 50%,
+    transparent 100%
+  );
+  z-index: 0;
+}
+
+.hero h1 {
+  max-width: 720px;
+  color: var(--text-color);
+  font-family: var(--heading-font-family);
+  font-size: clamp(2.75rem, 7vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  position: relative;
+  z-index: 1;
+}
+
+.hero h2,
+.hero h3,
+.hero h4,
+.hero h5,
+.hero h6 {
+  color: var(--text-color);
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+}
+
+/* picture wrapper — stretch to fill hero as background */
+.hero p:has(picture) {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  margin: 0;
+  padding: 0;
+  max-width: unset;
+}
+
+.hero p:not(:has(picture)) {
+  max-width: 520px;
+  color: var(--dark-color);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-m);
+  line-height: 1.75;
+  position: relative;
+  z-index: 1;
+}
+
+.hero p:not(:has(picture), .button-container) {
+  border-left: 4px solid var(--accent-color);
+  padding-left: 24px;
+}
+
+.hero .button-container {
+  position: relative;
+  z-index: 1;
+}
+
+.hero a.button:any-link {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--light-color);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+}
+
+.hero a.button:hover,
+.hero a.button:focus {
+  background-color: var(--link-hover-color);
+  border-color: var(--link-hover-color);
+  color: var(--light-color);
+}
+
+.hero a.button.secondary:any-link {
+  background-color: transparent;
+  color: var(--text-color);
+  border-color: var(--dark-color);
+  box-shadow: none;
+}
+
+.hero a.button.secondary:hover,
+.hero a.button.secondary:focus {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: transparent;
+}
+
+.hero picture {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  object-fit: cover;
+  box-sizing: border-box;
+}
+
+.hero img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+@media (width >= 900px) {
+  .hero {
+    padding: 120px 64px;
+    min-height: 100vh;
+  }
+}

@@ -7,3 +7,4 @@ node_modules/
 
 # Claude / editor
 .claude/scheduled_tasks.lock
+
