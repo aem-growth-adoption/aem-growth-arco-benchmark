@@ -267,6 +267,23 @@ providers:
     config:
       region: us-east-1
 
+  # ── AWS Bedrock — NVIDIA Nemotron (eu-west-1) ────────────────────────────────
+  # nemotron-super-120b not deployed in eu-west-1 (endpoint times out)
+  - id: bedrock:converse:nvidia.nemotron-nano-9b-v2
+    label: bedrock-eu/nemotron-nano-9b-v2
+    config:
+      region: eu-west-1
+
+  - id: bedrock:converse:nvidia.nemotron-nano-12b-v2
+    label: bedrock-eu/nemotron-nano-12b-v2
+    config:
+      region: eu-west-1
+
+  - id: bedrock:converse:nvidia.nemotron-nano-3-30b
+    label: bedrock-eu/nemotron-nano-30b
+    config:
+      region: eu-west-1
+
 defaultTest:
   options:
     transform: '(s=>{s=typeof output==="string"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\s\S]*?<\/think>/g,"").replace(/^```(?:json)?\s*/m,"").replace(/\s*```\s*$/m,"");const i=s.indexOf("{");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c==="\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c==="{")d++;else if(c==="}"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()'
