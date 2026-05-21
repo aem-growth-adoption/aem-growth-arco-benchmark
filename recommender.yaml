@@ -7,24 +7,56 @@ providers:
   # ── Google Vertex AI — Gemini ────────────────────────────────────────────────
   - id: vertex:gemini-2.5-flash-lite
     label: gemini-2.5-flash-lite (production)
+    config:
+      maxOutputTokens: 4096
+      generationConfig:
+        thinkingConfig:
+          thinkingBudget: 0
 
   - id: vertex:gemini-2.5-flash
     label: gemini-2.5-flash
+    config:
+      maxOutputTokens: 4096
+      generationConfig:
+        thinkingConfig:
+          thinkingBudget: 0
 
   - id: vertex:gemini-2.5-pro
     label: gemini-2.5-pro
+    config:
+      maxOutputTokens: 4096
+      generationConfig:
+        thinkingConfig:
+          thinkingBudget: 0
 
   - id: vertex:gemini-2.0-flash
     label: gemini-2.0-flash
+    config:
+      maxOutputTokens: 4096
 
   - id: vertex:gemini-3-flash-preview
     label: gemini-3-flash-preview
+    config:
+      maxOutputTokens: 4096
+      generationConfig:
+        thinkingConfig:
+          thinkingBudget: 0
 
   - id: vertex:gemini-3.1-flash-lite-preview
     label: gemini-3.1-flash-lite-preview
+    config:
+      maxOutputTokens: 4096
+      generationConfig:
+        thinkingConfig:
+          thinkingBudget: 0
 
   - id: vertex:gemini-3.1-pro-preview
     label: gemini-3.1-pro-preview
+    config:
+      maxOutputTokens: 4096
+      generationConfig:
+        thinkingConfig:
+          thinkingBudget: 0
 
   # ── Google Vertex AI — Llama (Meta MaaS, serverless) ────────────────────────
   - id: "openai:chat:meta/llama-4-maverick-17b-128e-instruct-maas"
@@ -32,29 +64,41 @@ providers:
     config:
       apiBaseUrl: "https://us-east5-aiplatform.googleapis.com/v1beta1/projects/{{env.VERTEX_PROJECT_ID}}/locations/us-east5/endpoints/openapi"
       apiKeyEnvar: GCLOUD_TOKEN
+      max_tokens: 4096
 
   - id: "openai:chat:meta/llama-4-scout-17b-16e-instruct-maas"
     label: vertex/llama-4-scout
     config:
       apiBaseUrl: "https://us-east5-aiplatform.googleapis.com/v1beta1/projects/{{env.VERTEX_PROJECT_ID}}/locations/us-east5/endpoints/openapi"
       apiKeyEnvar: GCLOUD_TOKEN
+      max_tokens: 4096
 
   - id: vertex:llama-3.3-70b-instruct-maas
     label: vertex/llama-3.3-70b
+    config:
+      maxOutputTokens: 4096
 
   # ── Google Vertex AI — Gemma ─────────────────────────────────────────────────
   - id: vertex:gemma-3-27b-it
     label: vertex/gemma-3-27b
+    config:
+      maxOutputTokens: 4096
 
   - id: vertex:gemma-3-12b-it
     label: vertex/gemma-3-12b
+    config:
+      maxOutputTokens: 4096
 
   # ── Google Vertex AI — Mistral ───────────────────────────────────────────────
   - id: vertex:mistral-medium-3
     label: vertex/mistral-medium-3
+    config:
+      maxOutputTokens: 4096
 
   - id: vertex:mistral-small-2503
     label: vertex/mistral-small-3.1
+    config:
+      maxOutputTokens: 4096
 
   # ── Cerebras (OpenAI-compatible, ~900 tok/s) ─────────────────────────────────
   - id: openai:chat:qwen-3-235b-a22b-instruct-2507
@@ -62,24 +106,29 @@ providers:
     config:
       apiBaseUrl: https://api.cerebras.ai/v1
       apiKeyEnvar: CEREBRAS_API_KEY
+      max_tokens: 4096
 
   - id: openai:chat:llama3.1-8b
     label: cerebras/llama-3.1-8b
     config:
       apiBaseUrl: https://api.cerebras.ai/v1
       apiKeyEnvar: CEREBRAS_API_KEY
+      max_tokens: 4096
 
   - id: openai:chat:gpt-oss-120b
     label: cerebras/gpt-oss-120b
     config:
       apiBaseUrl: https://api.cerebras.ai/v1
       apiKeyEnvar: CEREBRAS_API_KEY
+      max_tokens: 4096
+      reasoning_effort: "none"
 
   - id: openai:chat:zai-glm-4.7
     label: cerebras/glm-4.7
     config:
       apiBaseUrl: https://api.cerebras.ai/v1
       apiKeyEnvar: CEREBRAS_API_KEY
+      max_tokens: 4096
 
   # ── Cloudflare Workers AI (OpenAI-compatible, edge inference) ────────────────
   - id: "openai:chat:@cf/meta/llama-4-scout-17b-16e-instruct"
@@ -87,72 +136,87 @@ providers:
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
   - id: "openai:chat:@cf/meta/llama-3.3-70b-instruct-fp8-fast"
     label: cloudflare/llama-3.3-70b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
   - id: "openai:chat:@cf/mistralai/mistral-small-3.1-24b-instruct"
     label: cloudflare/mistral-small-3.1
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
+  # reasoning cannot be disabled for qwq-32b (pure reasoning model, no API param)
   - id: "openai:chat:@cf/qwen/qwq-32b"
     label: cloudflare/qwq-32b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
   - id: "openai:chat:@cf/google/gemma-3-12b-it"
     label: cloudflare/gemma-3-12b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
   - id: "openai:chat:@cf/google/gemma-4-26b-a4b-it"
     label: cloudflare/gemma-4-26b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
   - id: "openai:chat:@cf/moonshotai/kimi-k2.6"
     label: cloudflare/kimi-k2.6
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
+      reasoning_effort: "none"
 
   - id: "openai:chat:@cf/nvidia/nemotron-3-120b-a12b"
     label: cloudflare/nemotron-3-super-120b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
+  # reasoning cannot be disabled for cloudflare/gpt-oss-120b (no API param exposed)
   - id: "openai:chat:@cf/openai/gpt-oss-120b"
     label: cloudflare/gpt-oss-120b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
   - id: "openai:chat:@cf/openai/gpt-oss-20b"
     label: cloudflare/gpt-oss-20b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
   - id: "openai:chat:@cf/qwen/qwen3-30b-a3b-fp8"
     label: cloudflare/qwen3-30b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
   - id: "openai:chat:@cf/aisingapore/gemma-sea-lion-v4-27b-it"
     label: cloudflare/sea-lion-v4-27b
     config:
       apiBaseUrl: "https://api.cloudflare.com/client/v4/accounts/{{env.CLOUDFLARE_ACCOUNT_ID}}/ai/v1"
       apiKeyEnvar: CLOUDFLARE_API_TOKEN
+      max_tokens: 4096
 
   # ── Kubernetes — Self-hosted (vLLM, OpenAI-compatible) ──────────────────────
   # Requires: kubectl port-forward -n gemma-system svc/gemma-4-e4b-server 8000:8000
@@ -161,109 +225,129 @@ providers:
     config:
       apiBaseUrl: "http://localhost:8000/v1"
       apiKey: "none"
+      max_tokens: 4096
 
   # ── AWS Bedrock — Anthropic ───────────────────────────────────────────────────
   - id: bedrock:us.anthropic.claude-opus-4-20250514-v1:0
     label: bedrock/claude-opus-4
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:us.anthropic.claude-sonnet-4-20250514-v1:0
     label: bedrock/claude-sonnet-4
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:us.anthropic.claude-haiku-4-5-20251001-v1:0
     label: bedrock/claude-haiku-4.5
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:us.anthropic.claude-3-5-haiku-20241022-v1:0
     label: bedrock/claude-3-5-haiku
     config:
       region: us-east-1
+      maxTokens: 4096
 
   # ── AWS Bedrock — Amazon Nova ─────────────────────────────────────────────────
   - id: bedrock:amazon.nova-micro-v1:0
     label: bedrock/nova-micro
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:amazon.nova-lite-v1:0
     label: bedrock/nova-lite
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:amazon.nova-pro-v1:0
     label: bedrock/nova-pro
     config:
       region: us-east-1
+      maxTokens: 4096
 
   # ── AWS Bedrock — Meta Llama ──────────────────────────────────────────────────
   - id: bedrock:us.meta.llama4-maverick-17b-instruct-v1:0
     label: bedrock/llama-4-maverick
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:us.meta.llama4-scout-17b-instruct-v1:0
     label: bedrock/llama-4-scout
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:us.meta.llama3-3-70b-instruct-v1:0
     label: bedrock/llama-3.3-70b
     config:
       region: us-east-1
+      maxTokens: 4096
 
   # ── AWS Bedrock — Mistral ─────────────────────────────────────────────────────
   - id: bedrock:mistral.mistral-large-3-675b-instruct
     label: bedrock/mistral-large-3
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:mistral.ministral-3-8b-instruct
     label: bedrock/ministral-8b
     config:
       region: us-east-1
+      maxTokens: 4096
 
   # ── AWS Bedrock — DeepSeek ────────────────────────────────────────────────────
   - id: bedrock:deepseek.v3.2
     label: bedrock/deepseek-v3.2
     config:
       region: us-east-1
+      maxTokens: 4096
 
   # ── AWS Bedrock — Qwen ────────────────────────────────────────────────────────
   - id: bedrock:qwen.qwen3-32b-v1:0
     label: bedrock/qwen3-32b
     config:
       region: us-east-1
+      maxTokens: 4096
 
   # ── AWS Bedrock — fast/small models ──────────────────────────────────────────
   - id: bedrock:mistral.ministral-3-3b-instruct
     label: bedrock/ministral-3b
     config:
       region: us-east-1
+      maxTokens: 4096
 
   # ── AWS Bedrock — NVIDIA Nemotron ─────────────────────────────────────────────
   - id: bedrock:converse:nvidia.nemotron-nano-9b-v2
     label: bedrock/nemotron-nano-9b-v2
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:converse:nvidia.nemotron-nano-12b-v2
     label: bedrock/nemotron-nano-12b-v2
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:converse:nvidia.nemotron-nano-3-30b
     label: bedrock/nemotron-nano-30b
     config:
       region: us-east-1
+      maxTokens: 4096
 
   - id: bedrock:converse:nvidia.nemotron-super-3-120b
     label: bedrock/nemotron-super-120b
     config:
       region: us-east-1
+      maxTokens: 4096
 
   # ── AWS Bedrock — NVIDIA Nemotron (eu-west-1) ────────────────────────────────
   # nemotron-super-120b not deployed in eu-west-1 (endpoint times out)
