@@ -1,8 +1,8 @@
 {
-  "evalId": "eval-2RH-2026-05-22T16:38:30",
+  "evalId": "eval-TwA-2026-06-19T10:10:56",
   "results": {
     "version": 3,
-    "timestamp": "2026-05-22T16:38:30.211Z",
+    "timestamp": "2026-06-19T10:10:56.052Z",
     "prompts": [
       {
         "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"{{query}}\\\"\\\\n\\\\nReturn JSON only.\"}]",
@@ -96108,18 +96108,2689 @@
           "_promptfooFileMetadata": {}
         },
         "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = beginner",
+                "value": "JSON.parse(output).intentType === 'beginner'"
+              }
+            }
+          ]
+        },
+        "id": "8250a765-1824-45fa-9a4f-ae4d1d88cb80",
+        "latencyMs": 1165,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"switching from Nespresso, what Arco machine should I get?\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"beginner\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [],\n    \"useCases\": [],\n    \"features\": []\n  },\n  \"journeyStage\": \"exploring\"\n}",
+          "tokenUsage": {
+            "total": 1166,
+            "prompt": 1105,
+            "completion": 61,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 1165,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "beginner: switching from Nespresso",
+          "vars": {
+            "query": "switching from Nespresso, what Arco machine should I get?"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = beginner",
+              "value": "JSON.parse(output).intentType === 'beginner'"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "query": "switching from Nespresso, what Arco machine should I get?"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = beginner",
+                "value": "JSON.parse(output).intentType === 'beginner'"
+              }
+            }
+          ]
+        },
+        "id": "a848037b-d008-419a-8aa9-68be166a15d8",
+        "latencyMs": 872,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"I've never made espresso before, where do I start?\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"beginner\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [],\n    \"useCases\": [],\n    \"features\": []\n  },\n  \"journeyStage\": \"exploring\"\n}",
+          "tokenUsage": {
+            "total": 1167,
+            "prompt": 1106,
+            "completion": 61,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 872,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "beginner: never made espresso before",
+          "vars": {
+            "query": "I've never made espresso before, where do I start?"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = beginner",
+              "value": "JSON.parse(output).intentType === 'beginner'"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "query": "I've never made espresso before, where do I start?"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = comparison",
+                "value": "JSON.parse(output).intentType === 'comparison'"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "extracts both primo and doppio as entities",
+                "value": "(() => { const p = JSON.parse(output).entities?.products || []; return p.some(x => x.includes('primo')) && p.some(x => x.includes('doppio')); })()"
+              }
+            }
+          ]
+        },
+        "id": "4183f644-2ce7-4abc-b6ed-18ec0a66e0bc",
+        "latencyMs": 1152,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"primo vs doppio which is better for a home barista?\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"comparison\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [\"primo\", \"doppio\"],\n    \"useCases\": [\"home barista\"],\n    \"features\": []\n  },\n  \"journeyStage\": \"comparing\"\n}",
+          "tokenUsage": {
+            "total": 1176,
+            "prompt": 1105,
+            "completion": 71,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 1152,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "comparison: primo vs doppio",
+          "vars": {
+            "query": "primo vs doppio which is better for a home barista?"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = comparison",
+              "value": "JSON.parse(output).intentType === 'comparison'"
+            },
+            {
+              "type": "javascript",
+              "description": "extracts both primo and doppio as entities",
+              "value": "(() => { const p = JSON.parse(output).entities?.products || []; return p.some(x => x.includes('primo')) && p.some(x => x.includes('doppio')); })()"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "vars": {
+          "query": "primo vs doppio which is better for a home barista?"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = comparison",
+                "value": "JSON.parse(output).intentType === 'comparison'"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "extracts both studio and studio-pro as entities",
+                "value": "(() => { const p = JSON.parse(output).entities?.products || []; const hasStudio = p.some(x => (x === 'studio' || x.includes('studio')) && !x.includes('pro')); const hasStudioPro = p.some(x => x.includes('studio-pro') || x.includes('studio pro')); return hasStudio && hasStudioPro; })()"
+              }
+            }
+          ]
+        },
+        "id": "36fb6a2d-f643-4cfc-8c7c-292dfeb2a5af",
+        "latencyMs": 736,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"what's the difference between the studio and studio-pro?\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"comparison\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [\"studio\", \"studio-pro\"],\n    \"useCases\": [],\n    \"features\": []\n  },\n  \"journeyStage\": \"comparing\"\n}",
+          "tokenUsage": {
+            "total": 1173,
+            "prompt": 1106,
+            "completion": 67,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 736,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "comparison: studio vs studio-pro",
+          "vars": {
+            "query": "what's the difference between the studio and studio-pro?"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = comparison",
+              "value": "JSON.parse(output).intentType === 'comparison'"
+            },
+            {
+              "type": "javascript",
+              "description": "extracts both studio and studio-pro as entities",
+              "value": "(() => { const p = JSON.parse(output).entities?.products || []; const hasStudio = p.some(x => (x === 'studio' || x.includes('studio')) && !x.includes('pro')); const hasStudioPro = p.some(x => x.includes('studio-pro') || x.includes('studio pro')); return hasStudio && hasStudioPro; })()"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "vars": {
+          "query": "what's the difference between the studio and studio-pro?"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "error": "Custom function returned false\n(JSON.parse(output).entities?.products || []).some(x => x.includes('ufficio'))",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.8571428571428571,
+          "reason": "Custom function returned false\n(JSON.parse(output).entities?.products || []).some(x => x.includes('ufficio'))",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = product-detail",
+                "value": "JSON.parse(output).intentType === 'product-detail'"
+              }
+            },
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function returned false\n(JSON.parse(output).entities?.products || []).some(x => x.includes('ufficio'))",
+              "assertion": {
+                "type": "javascript",
+                "description": "extracts ufficio as entity",
+                "value": "(JSON.parse(output).entities?.products || []).some(x => x.includes('ufficio'))"
+              }
+            }
+          ]
+        },
+        "id": "33915dee-ee61-4dc2-a8a2-a8e533f7bafb",
+        "latencyMs": 984,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"tell me everything about the ufficio\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"product-detail\",\n  \"confidence\": 0.95,\n  \"entities\": {\n    \"products\": [\"uffio\"],\n    \"useCases\": [],\n    \"features\": []\n  },\n  \"journeyStage\": \"exploring\"\n}",
+          "tokenUsage": {
+            "total": 1168,
+            "prompt": 1100,
+            "completion": 68,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 984,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 0.8571428571428571,
+        "success": false,
+        "testCase": {
+          "description": "product-detail: ufficio",
+          "vars": {
+            "query": "tell me everything about the ufficio"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = product-detail",
+              "value": "JSON.parse(output).intentType === 'product-detail'"
+            },
+            {
+              "type": "javascript",
+              "description": "extracts ufficio as entity",
+              "value": "(JSON.parse(output).entities?.products || []).some(x => x.includes('ufficio'))"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 4,
+        "vars": {
+          "query": "tell me everything about the ufficio"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = discovery",
+                "value": "JSON.parse(output).intentType === 'discovery'"
+              }
+            }
+          ]
+        },
+        "id": "eb6e03c3-0b6c-4439-a2b5-be407de8c5dd",
+        "latencyMs": 1002,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"show me all your espresso machines\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"discovery\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [],\n    \"useCases\": [],\n    \"features\": []\n  },\n  \"journeyStage\": \"exploring\"\n}",
+          "tokenUsage": {
+            "total": 1160,
+            "prompt": 1099,
+            "completion": 61,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 1002,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "discovery: browse all machines",
+          "vars": {
+            "query": "show me all your espresso machines"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = discovery",
+              "value": "JSON.parse(output).intentType === 'discovery'"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 5,
+        "vars": {
+          "query": "show me all your espresso machines"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = use-case",
+                "value": "JSON.parse(output).intentType === 'use-case'"
+              }
+            }
+          ]
+        },
+        "id": "c0bc3f5c-2c14-4c38-99ca-e452eb3688c1",
+        "latencyMs": 1130,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"best machine for a busy home office with multiple users\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"use-case\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [],\n    \"useCases\": [\"home office\", \"multiple users\"],\n    \"features\": []\n  },\n  \"journeyStage\": \"exploring\"\n}",
+          "tokenUsage": {
+            "total": 1174,
+            "prompt": 1103,
+            "completion": 71,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 1130,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "use-case: home office multiple users",
+          "vars": {
+            "query": "best machine for a busy home office with multiple users"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = use-case",
+              "value": "JSON.parse(output).intentType === 'use-case'"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 6,
+        "vars": {
+          "query": "best machine for a busy home office with multiple users"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = specs",
+                "value": "JSON.parse(output).intentType === 'specs'"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "extracts studio-pro as entity",
+                "value": "(JSON.parse(output).entities?.products || []).some(x => x.includes('studio'))"
+              }
+            }
+          ]
+        },
+        "id": "98fedba9-7ffb-4647-8aa2-0c8334bd5a60",
+        "latencyMs": 1008,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"what is the boiler size and pressure rating of the studio pro?\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"specs\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [\"studio-pro\"],\n    \"useCases\": [],\n    \"features\": [\"boiler size\", \"pressure rating\"]\n  },\n  \"journeyStage\": \"deciding\"\n}",
+          "tokenUsage": {
+            "total": 1178,
+            "prompt": 1106,
+            "completion": 72,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 1008,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "specs: studio pro boiler and pressure",
+          "vars": {
+            "query": "what is the boiler size and pressure rating of the studio pro?"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = specs",
+              "value": "JSON.parse(output).intentType === 'specs'"
+            },
+            {
+              "type": "javascript",
+              "description": "extracts studio-pro as entity",
+              "value": "(JSON.parse(output).entities?.products || []).some(x => x.includes('studio'))"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 7,
+        "vars": {
+          "query": "what is the boiler size and pressure rating of the studio pro?"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = reviews",
+                "value": "JSON.parse(output).intentType === 'reviews'"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "extracts nano as entity",
+                "value": "(JSON.parse(output).entities?.products || []).some(x => x.includes('nano'))"
+              }
+            }
+          ]
+        },
+        "id": "f56028ae-c00c-474c-9c73-2c1deae16705",
+        "latencyMs": 759,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"what do customers say about the nano?\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"reviews\",\n  \"confidence\": 0.95,\n  \"entities\": {\n    \"products\": [\"nano\"],\n    \"useCases\": [],\n    \"features\": []\n  },\n  \"journeyStage\": \"deciding\"\n}",
+          "tokenUsage": {
+            "total": 1165,
+            "prompt": 1101,
+            "completion": 64,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 759,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "reviews: nano customer opinions",
+          "vars": {
+            "query": "what do customers say about the nano?"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = reviews",
+              "value": "JSON.parse(output).intentType === 'reviews'"
+            },
+            {
+              "type": "javascript",
+              "description": "extracts nano as entity",
+              "value": "(JSON.parse(output).entities?.products || []).some(x => x.includes('nano'))"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 8,
+        "vars": {
+          "query": "what do customers say about the nano?"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = price",
+                "value": "JSON.parse(output).intentType === 'price'"
+              }
+            }
+          ]
+        },
+        "id": "95339b8e-b2a8-48a4-8a73-fe4d8c1e6b99",
+        "latencyMs": 876,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"I'm a student, what's the most affordable Arco espresso machine?\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"price\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [],\n    \"useCases\": [\"student\"],\n    \"features\": [\"affordable\"]\n  },\n  \"journeyStage\": \"deciding\"\n}",
+          "tokenUsage": {
+            "total": 1174,
+            "prompt": 1109,
+            "completion": 65,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 876,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "price: student budget",
+          "vars": {
+            "query": "I'm a student, what's the most affordable Arco espresso machine?"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = price",
+              "value": "JSON.parse(output).intentType === 'price'"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 9,
+        "vars": {
+          "query": "I'm a student, what's the most affordable Arco espresso machine?"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = recommendation",
+                "value": "JSON.parse(output).intentType === 'recommendation'"
+              }
+            }
+          ]
+        },
+        "id": "6366aa18-5612-430a-bd45-e3170edcec7c",
+        "latencyMs": 861,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"I'm an experienced barista who dials in single origin, what should I get?\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"recommendation\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [],\n    \"useCases\": [],\n    \"features\": []\n  },\n  \"journeyStage\": \"deciding\"\n}",
+          "tokenUsage": {
+            "total": 1172,
+            "prompt": 1110,
+            "completion": 62,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 861,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "recommendation: experienced barista",
+          "vars": {
+            "query": "I'm an experienced barista who dials in single origin, what should I get?"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = recommendation",
+              "value": "JSON.parse(output).intentType === 'recommendation'"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 10,
+        "vars": {
+          "query": "I'm an experienced barista who dials in single origin, what should I get?"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = support",
+                "value": "JSON.parse(output).intentType === 'support'"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "extracts primo as entity",
+                "value": "(JSON.parse(output).entities?.products || []).some(x => x.includes('primo'))"
+              }
+            }
+          ]
+        },
+        "id": "bebefe8f-3116-4031-957b-0b6aa7f84366",
+        "latencyMs": 570,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"my primo keeps tripping the circuit breaker, help\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"support\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [\"primo\"],\n    \"useCases\": [],\n    \"features\": [\"circuit breaker\"]\n  },\n  \"journeyStage\": \"deciding\"\n}",
+          "tokenUsage": {
+            "total": 1169,
+            "prompt": 1102,
+            "completion": 67,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 570,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "support: machine tripping breaker",
+          "vars": {
+            "query": "my primo keeps tripping the circuit breaker, help"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = support",
+              "value": "JSON.parse(output).intentType === 'support'"
+            },
+            {
+              "type": "javascript",
+              "description": "extracts primo as entity",
+              "value": "(JSON.parse(output).entities?.products || []).some(x => x.includes('primo'))"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 11,
+        "vars": {
+          "query": "my primo keeps tripping the circuit breaker, help"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = gift",
+                "value": "JSON.parse(output).intentType === 'gift'"
+              }
+            }
+          ]
+        },
+        "id": "01b6cfe2-22dd-4ab0-880c-943b7576ef47",
+        "latencyMs": 662,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"best espresso machine as a birthday gift for a coffee lover\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"gift\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [],\n    \"useCases\": [],\n    \"features\": []\n  },\n  \"journeyStage\": \"deciding\"\n}",
+          "tokenUsage": {
+            "total": 1165,
+            "prompt": 1104,
+            "completion": 61,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 662,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "gift: birthday present for coffee lover",
+          "vars": {
+            "query": "best espresso machine as a birthday gift for a coffee lover"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = gift",
+              "value": "JSON.parse(output).intentType === 'gift'"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 12,
+        "vars": {
+          "query": "best espresso machine as a birthday gift for a coffee lover"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = upgrade",
+                "value": "JSON.parse(output).intentType === 'upgrade'"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "extracts primo as entity",
+                "value": "(JSON.parse(output).entities?.products || []).some(x => x.includes('primo'))"
+              }
+            }
+          ]
+        },
+        "id": "d0d0ef07-59c5-48ae-9439-414476e0b65a",
+        "latencyMs": 695,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"I have the primo and want to upgrade, what should I consider?\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"upgrade\",\n  \"confidence\": 0.95,\n  \"entities\": {\n    \"products\": [\"primo\"],\n    \"useCases\": [],\n    \"features\": []\n  },\n  \"journeyStage\": \"deciding\"\n}",
+          "tokenUsage": {
+            "total": 1172,
+            "prompt": 1107,
+            "completion": 65,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 695,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "upgrade: from primo",
+          "vars": {
+            "query": "I have the primo and want to upgrade, what should I consider?"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = upgrade",
+              "value": "JSON.parse(output).intentType === 'upgrade'"
+            },
+            {
+              "type": "javascript",
+              "description": "extracts primo as entity",
+              "value": "(JSON.parse(output).entities?.products || []).some(x => x.includes('primo'))"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 13,
+        "vars": {
+          "query": "I have the primo and want to upgrade, what should I consider?"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json",
+                "description": "Output is valid JSON"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intentType is one of 13 valid values",
+                "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "confidence is a number in [0, 1]",
+                "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "journeyStage is exploring | comparing | deciding",
+                "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "entities.products is an array",
+                "value": "Array.isArray(JSON.parse(output).entities?.products)"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "description": "intent = technique",
+                "value": "JSON.parse(output).intentType === 'technique'"
+              }
+            }
+          ]
+        },
+        "id": "b406a2ba-c9ea-42e7-beaa-979571de5743",
+        "latencyMs": 734,
+        "namedScores": {},
+        "prompt": {
+          "raw": "[{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee equipment recommendation system.\\nClassify user queries into intent types and extract entities.\\n\\nArco is a premium coffee equipment brand that makes espresso machines, grinders, and accessories.\\n\\nArco product model names: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico, filtro, preciso, macinino, zero\\n\\nProduct categories:\\n- Espresso Machines: primo, doppio, nano, studio, studio-pro, ufficio, viaggio, automatico\\n- Grinders: filtro, preciso, macinino, zero\\n\\n## Intent Types\\n- discovery: User is broadly browsing or exploring the product line with no specific criteria\\n- comparison: User wants to compare two or more specific products\\n- product-detail: User asks for in-depth information about one specific product\\n- use-case: User describes a specific context or scenario as the PRIMARY framing (home office, multiple users, travel, restaurant, etc.)\\n- specs: User asks about technical specifications (boiler, pressure, weight, dimensions, watts, etc.)\\n- reviews: User asks about reviews, opinions, ratings, or customer experiences\\n- price: User's PRIMARY concern is cost, budget, or affordability (keywords: budget, affordable, cheap, cheapest, student, price, most affordable, inexpensive, how much, worth it)\\n- recommendation: User asks for a personal recommendation based on expertise or preferences, with no other more specific intent signal\\n- support: User has a product problem, malfunction, error, warranty question, or repair issue\\n- gift: User is buying for someone else as a gift (keywords: gift, birthday, anniversary, wedding, present, for a friend, for my partner, for someone)\\n- beginner: User is new to espresso OR switching from pod/capsule machines (keywords: first espresso machine, never made espresso, beginner, new to espresso, switching from Nespresso, switching from pods, pod machine, capsule machine, Nespresso, Keurig, Dolce Gusto)\\n- upgrade: User wants to upgrade from their current equipment to something better\\n- technique: User asks about brewing technique, recipes, milk steaming, grind settings, or barista methods\\n\\n## Disambiguation Priority — when multiple intents could apply, use the HIGHEST-priority match:\\n1. **support** — user describes a product problem, error, malfunction, or warranty issue (highest priority)\\n2. **gift** — ANY mention of gift, birthday, anniversary, present, or buying for someone else\\n3. **beginner** — user is new to espresso OR switching from pod/capsule machines (Nespresso, etc.)\\n4. **specs** — primary question is about technical specifications\\n5. **comparison** — user explicitly compares two or more named products\\n6. **price** — affordability or budget is the PRIMARY stated concern\\n7. **use-case** — user describes a specific use scenario or context\\n8. **recommendation** — personal recommendation request with no other specific signal\\n9. **discovery** — broad browsing with no specific criteria (lowest priority)\\n\\n## Examples\\n- \\\"switching from Nespresso, what Arco machine should I get?\\\" → **beginner** (switching from pod machine)\\n- \\\"I've never made espresso before, where do I start?\\\" → **beginner** (new to espresso)\\n- \\\"best machine for a busy home office with multiple users\\\" → **use-case** (specific scenario)\\n- \\\"I'm a student, what's the most affordable Arco espresso machine?\\\" → **price** (budget is primary concern)\\n- \\\"best espresso machine as a birthday gift for a coffee lover\\\" → **gift** (buying for someone else)\\n- \\\"I'm an experienced barista who dials in single origin, what should I get?\\\" → **recommendation** (expertise-based personal recommendation)\\n- \\\"show me all your espresso machines\\\" → **discovery** (broad browsing)\\n- \\\"my primo keeps tripping the circuit breaker\\\" → **support** (product malfunction)\\n\\n## Output Instructions\\nReturn ONLY a valid JSON object — no markdown fences, no code blocks, no explanations, no extra text.\\n\\n{\\n  \\\"intentType\\\": \\\"<one of the 13 intent types above>\\\",\\n  \\\"confidence\\\": <0.0 to 1.0>,\\n  \\\"entities\\\": {\\n    \\\"products\\\": [\\\"<arco model names mentioned>\\\"],\\n    \\\"useCases\\\": [\\\"<use cases detected>\\\"],\\n    \\\"features\\\": [\\\"<features or specs mentioned>\\\"]\\n  },\\n  \\\"journeyStage\\\": \\\"<exploring | comparing | deciding>\\\"\\n}\\n\\nCRITICAL:\\n- \\\"products\\\" MUST always be an array — use [] if no Arco products are mentioned by name\\n- Only include a model in \\\"products\\\" if the user explicitly names it\\n- If the user asks about a category (e.g. \\\"a grinder\\\"), use useCases — do NOT guess a model name\\n- Return ONLY the JSON object. No markdown, no fences, no commentary before or after.\\n\"},{\"role\":\"user\",\"content\":\"Classify this query: \\\"how do I steam milk properly for latte art?\\\"\\\\n\\\\nReturn JSON only.\"}]",
+          "label": "prompts/classification.yaml: [{\"role\":\"system\",\"content\":\"You are an intent classifier for the Arco coffee eq",
+          "config": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          }
+        },
+        "promptId": "7e717746217dcf04ff62589be5f0c5b4831290ed1c9f60f5c66f00918bf1dd27",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:google/diffusiongemma-26B-A4B-it",
+          "label": "vertex/diffusion-gemma-26b"
+        },
+        "response": {
+          "output": "{\n  \"intentType\": \"technique\",\n  \"confidence\": 1.0,\n  \"entities\": {\n    \"products\": [],\n    \"useCases\": [],\n    \"features\": [\"milk steaming\", \"latte art\"]\n  },\n  \"journeyStage\": \"exploring\"\n}",
+          "tokenUsage": {
+            "total": 1173,
+            "prompt": 1103,
+            "completion": 70,
+            "numRequests": 1
+          },
+          "cached": false,
+          "latencyMs": 734,
+          "finishReason": "stop",
+          "guardrails": {
+            "flagged": false
+          },
+          "metadata": {
+            "http": {
+              "status": 200,
+              "statusText": "OK",
+              "headers": {}
+            }
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "technique: milk steaming for latte art",
+          "vars": {
+            "query": "how do I steam milk properly for latte art?"
+          },
+          "assert": [
+            {
+              "type": "is-json",
+              "description": "Output is valid JSON"
+            },
+            {
+              "type": "javascript",
+              "description": "intentType is one of 13 valid values",
+              "value": "['discovery','comparison','product-detail','use-case','specs','reviews','price','recommendation','support','gift','beginner','upgrade','technique'].includes(JSON.parse(output).intentType)"
+            },
+            {
+              "type": "javascript",
+              "description": "confidence is a number in [0, 1]",
+              "value": "typeof JSON.parse(output).confidence === 'number' && JSON.parse(output).confidence >= 0 && JSON.parse(output).confidence <= 1"
+            },
+            {
+              "type": "javascript",
+              "description": "journeyStage is exploring | comparing | deciding",
+              "value": "['exploring','comparing','deciding'].includes(JSON.parse(output).journeyStage)"
+            },
+            {
+              "type": "javascript",
+              "description": "entities.products is an array",
+              "value": "Array.isArray(JSON.parse(output).entities?.products)"
+            },
+            {
+              "type": "javascript",
+              "description": "intent = technique",
+              "value": "JSON.parse(output).intentType === 'technique'"
+            }
+          ],
+          "options": {
+            "transform": "(s=>{s=typeof output===\"string\"?output:output?.content??JSON.stringify(output);s=s.replace(/<think>[\\s\\S]*?<\\/think>/g,\"\").replace(/^```(?:json)?\\s*/m,\"\").replace(/\\s*```\\s*$/m,\"\");const i=s.indexOf(\"{\");if(i===-1)return s.trim();let d=0,q=false,e=false;for(let k=i;k<s.length;k++){const c=s[k];if(e){e=false;continue}if(c===\"\\\\\"&&q){e=true;continue}if(c.charCodeAt(0)===34){q=!q;continue}if(!q){if(c===\"{\")d++;else if(c===\"}\"&&--d===0)return s.slice(i,k+1).trim()}}return s.slice(i).trim()})()"
+          },
+          "metadata": {}
+        },
+        "testIdx": 14,
+        "vars": {
+          "query": "how do I steam milk properly for latte art?"
+        },
+        "metadata": {
+          "http": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {}
+          },
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
       }
     ],
     "stats": {
-      "successes": 357,
+      "successes": 371,
       "failures": 0,
-      "errors": 438,
+      "errors": 439,
       "tokenUsage": {
-        "prompt": 399825,
-        "completion": 33893,
+        "prompt": 16566,
+        "completion": 986,
         "cached": 0,
-        "total": 433718,
-        "numRequests": 795,
+        "total": 17552,
+        "numRequests": 15,
         "completionDetails": {
           "reasoning": 0,
           "acceptedPrediction": 0,
@@ -96142,8 +98813,8 @@
           }
         }
       },
-      "durationMs": 369550,
-      "evaluationDurationMs": 369550
+      "durationMs": 1925,
+      "evaluationDurationMs": 1925
     }
   },
   "config": {
