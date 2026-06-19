@@ -89,6 +89,19 @@ providers:
     config:
       maxOutputTokens: 4096
 
+  # ── Google Vertex AI — DiffusionGemma (dedicated vLLM endpoint) ──────────────
+  # Custom Model Garden deployment (diffusiongemma-26B-A4B-it) on a dedicated
+  # prediction endpoint. The vLLM container serves the OpenAI chat-completions
+  # route, so we reuse the openai:chat provider (same pattern as Llama-4 MaaS).
+  # Note: the *.prediction.vertexai.goog host embeds Vertex's internal project
+  # number (197928964237); the resource PATH uses VERTEX_PROJECT_ID (642841493686).
+  - id: "openai:chat:google/diffusiongemma-26B-A4B-it"
+    label: vertex/diffusion-gemma-26b
+    config:
+      apiBaseUrl: "https://mg-endpoint-0bb3dafe-431a-4e0f-9245-b633ac626a08.europe-west4-197928964237.prediction.vertexai.goog/v1/projects/{{env.VERTEX_PROJECT_ID}}/locations/europe-west4/endpoints/mg-endpoint-0bb3dafe-431a-4e0f-9245-b633ac626a08"
+      apiKeyEnvar: GCLOUD_TOKEN
+      max_tokens: 4096
+
   # ── Google Vertex AI — Mistral ───────────────────────────────────────────────
   - id: vertex:mistral-medium-3
     label: vertex/mistral-medium-3
