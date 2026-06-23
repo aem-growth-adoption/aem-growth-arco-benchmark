@@ -379,6 +379,14 @@ providers:
     config:
       region: eu-west-1
 
+  # ── Taalas (OpenAI-compatible, custom silicon inference) ─────────────────────
+  - id: openai:chat:llama3.1-8B
+    label: taalas/llama-3.1-8b
+    config:
+      apiBaseUrl: https://api.taalas.com/v1
+      apiKeyEnvar: TAALAS_KEY
+      max_tokens: 4096
+
 defaultTest:
   options:
     transform: '(output=>{const s=typeof output==="string"?output:output?.content??JSON.stringify(output);return s.replace(/<think>[\s\S]*?<\/think>/g,"").replace(/^```(?:json)?\s*/m,"").replace(/\s*```\s*$/m,"").trim()})(output)'
