@@ -145,6 +145,13 @@ providers:
       apiKeyEnvar: CEREBRAS_API_KEY
       max_tokens: 4096
 
+  - id: openai:chat:gemma-4-31b-trial
+    label: cerebras/gemma-4-31b-trial
+    config:
+      apiBaseUrl: https://api.cerebras.ai/v1
+      apiKeyEnvar: CEREBRAS_API_KEY
+      max_tokens: 4096
+
   # ── Cloudflare Workers AI (OpenAI-compatible, edge inference) ────────────────
   - id: "openai:chat:@cf/meta/llama-4-scout-17b-16e-instruct"
     label: cloudflare/llama-4-scout-17b
