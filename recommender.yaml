@@ -145,6 +145,9 @@ providers:
       apiBaseUrl: https://api.cerebras.ai/v1
       apiKeyEnvar: CEREBRAS_API_KEY
       max_tokens: 4096
+      # Cerebras returns glm reasoning in a separate field; suppress so
+      # promptfoo doesn't prepend "Thinking: …" and corrupt the JSON output.
+      showThinking: false
 
   - id: openai:chat:gemma-4-31b-trial
     label: cerebras/gemma-4-31b-trial
