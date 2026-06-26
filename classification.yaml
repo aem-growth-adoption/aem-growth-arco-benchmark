@@ -60,6 +60,36 @@ providers:
         thinkingConfig:
           thinkingBudget: 0
 
+  # gemini-3.5-flash is served only in the "global" location, not us-central1.
+  - id: vertex:gemini-3.5-flash
+    label: gemini-3.5-flash
+    config:
+      region: global
+      maxOutputTokens: 4096
+      generationConfig:
+        thinkingConfig:
+          thinkingBudget: 0
+
+  # Rolling aliases (global-only). -latest tracks Google's current promotion,
+  # so the underlying version can drift between runs.
+  - id: vertex:gemini-flash-latest
+    label: gemini-flash-latest
+    config:
+      region: global
+      maxOutputTokens: 4096
+      generationConfig:
+        thinkingConfig:
+          thinkingBudget: 0
+
+  - id: vertex:gemini-flash-lite-latest
+    label: gemini-flash-lite-latest
+    config:
+      region: global
+      maxOutputTokens: 4096
+      generationConfig:
+        thinkingConfig:
+          thinkingBudget: 0
+
   # ── Google Vertex AI — Llama (Meta MaaS, serverless) ────────────────────────
   - id: "openai:chat:meta/llama-4-maverick-17b-128e-instruct-maas"
     label: vertex/llama-4-maverick
