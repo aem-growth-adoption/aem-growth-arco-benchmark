@@ -136,7 +136,10 @@ providers:
       apiBaseUrl: https://api.cerebras.ai/v1
       apiKeyEnvar: CEREBRAS_API_KEY
       max_tokens: 4096
-      reasoning_effort: "none"
+      reasoning_effort: "low"
+      # Cerebras returns gpt-oss reasoning in a separate field; suppress so
+      # promptfoo doesn't prepend "Thinking: …" and corrupt the JSON output.
+      showThinking: false
 
   - id: openai:chat:zai-glm-4.7
     label: cerebras/glm-4.7
