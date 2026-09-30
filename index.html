@@ -55,6 +55,10 @@
     .filters select { margin-left: 6px; padding: 4px 8px; border-radius: 6px; border: 1px solid #ddd; background: #fff; font-size: 0.85rem; }
     .note { font-size: 0.8rem; color: #888; line-height: 1.5; margin-top: 12px; }
     .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .table-scroll { overflow-x: auto; }
+    table.compact { font-size: 0.8rem; }
+    table.compact th { white-space: normal; padding: 8px 6px; vertical-align: bottom; }
+    table.compact td { padding: 8px 6px; }
     .muted { color: #aaa; }
   </style>
 </head>
@@ -88,6 +92,7 @@
     function switchTab(name) {
       document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.panel === name));
       document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === name));
+      history.replaceState(null, '', '#' + name);
     }
 
     function color(rate) {
@@ -260,12 +265,12 @@
       { key: 'label',       label: 'Model' },
       { key: 'ttftP50',     label: 'TTFT p50',          get: e => e.stats.ttftMs?.p50 },
       { key: 'ttftP95',     label: 'TTFT p95',          get: e => e.stats.ttftMs?.p95 },
-      { key: 'contentP50',  label: 'First content p50', get: e => e.stats.firstContentMs?.p50 },
+      { key: 'contentP50',  label: 'Content p50', get: e => e.stats.firstContentMs?.p50 },
       { key: 'totalP50',    label: 'Total p50',         get: e => e.stats.totalMs?.p50 },
-      { key: 'tokps',       label: 'Decode tok/s p50',  get: e => e.stats.decodeTokPerSec?.p50 },
-      { key: 'serverTtft',  label: 'Server TTFT p50',   get: e => e.stats.serverTtftMs?.p50 },
+      { key: 'tokps',       label: 'tok/s p50',  get: e => e.stats.decodeTokPerSec?.p50 },
+      { key: 'serverTtft',  label: 'Server TTFT',   get: e => e.stats.serverTtftMs?.p50 },
       { key: 'samples',     label: 'Samples' },
-      { key: 'location',    label: 'Client location' },
+      { key: 'location',    label: 'Location' },
     ];
     const ttftState = { entries: [], suite: null, location: null, col: 'ttftP50', dir: 1 };
 
@@ -306,7 +311,7 @@
             <td class="num">
               <div class="pass-rate">
                 <span>${fmtMs(ttft)}</span>
-                ${typeof ttft === 'number' ? `<div class="bar-wrap" style="width:90px"><div class="bar" style="width:${ttft / maxTtft * 100}%;background:${ttftColor(ttft)}"></div></div>` : ''}
+                ${typeof ttft === 'number' ? `<div class="bar-wrap" style="width:60px"><div class="bar" style="width:${ttft / maxTtft * 100}%;background:${ttftColor(ttft)}"></div></div>` : ''}
               </div>
             </td>
             <td class="num latency">${fmtMs(s.ttftMs?.p95)}</td>
@@ -355,21 +360,24 @@
             <label>Prompt suite<select onchange="onTtftFilter('suite', this.value)">${opts(suites, ttftState.suite)}</select></label>
             <label>Client location<select onchange="onTtftFilter('location', this.value)">${locations.length > 1 ? '<option value="*">all</option>' : ''}${opts(locations, ttftState.location)}</select></label>
           </div>
-          <table>
+          <div class="table-scroll">
+          <table class="compact">
             <thead><tr>${TTFT_COLS.map(c => `<th onclick="onTtftSort('${c.key}')">${escHtml(c.label)}</th>`).join('')}</tr></thead>
             <tbody></tbody>
           </table>
+          </div>
           <div class="timestamp" id="ttft-ts"></div>
           <p class="note">
             Measured client-side over streaming requests, one at a time per model, using the suite's prompts.
             <b>TTFT</b> is the time to the first streamed token (including reasoning tokens);
-            <b>first content</b> is the first visible answer token, which differs only for reasoning models.
+            <b>Content</b> is the time to the first visible answer token, which differs only for reasoning models.
             <b>Server TTFT</b> is the provider's own figure where the API reports it.
             Client-side numbers include network round-trips, so only compare rows measured from the same client location.
           </p>
         </div>`;
       document.querySelector('.tab[data-panel="ttft"]').hidden = false;
       renderTtftRows();
+      if (location.hash === '#ttft') switchTab('ttft');
     }
 
     async function loadTtft() {
@@ -385,6 +393,7 @@
     load('results/classification.json', 'classification');
     load('results/reasoning.json', 'reasoning');
     load('results/recommender.json', 'recommender');
+    if (['reasoning', 'recommender'].includes(location.hash.slice(1))) switchTab(location.hash.slice(1));
     loadTtft();
   </script>
 </body>
