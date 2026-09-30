@@ -12,8 +12,9 @@
     header p { font-size: 0.85rem; opacity: 0.6; margin-top: 4px; }
     main { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
     .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
-    .tab { padding: 8px 20px; border-radius: 6px; border: none; background: #e0e0e0; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: background 0.15s; }
-    .tab.active { background: #1a1a1a; color: #fff; }
+    .tab, .subtab { padding: 8px 20px; border-radius: 6px; border: none; background: #e0e0e0; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: background 0.15s; }
+    .tab.active, .subtab.active { background: #1a1a1a; color: #fff; }
+    .subtabs { margin-top: -12px; margin-bottom: 20px; }
     .panel { display: none; }
     .panel.active { display: block; }
     .card { background: #fff; border-radius: 10px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
@@ -340,24 +341,34 @@
 
     function onTtftFilter(key, value) {
       ttftState[key] = value;
+      if (key === 'suite') {
+        document.querySelectorAll('#ttft .subtab').forEach(b => b.classList.toggle('active', b.dataset.suite === value));
+      }
       renderTtftRows();
     }
+
+    const SUITE_LABELS = { classification: 'Intent Classification', reasoning: 'Block Reasoning', recommender: 'Recommender' };
 
     function renderTtft(data) {
       const entries = (data.entries || []).filter(e => e.stats && e.suite);
       if (!entries.length) return;
       ttftState.entries = entries;
-      const suites = [...new Set(entries.map(e => e.suite))];
+      const known = Object.keys(SUITE_LABELS);
+      const suites = [...new Set(entries.map(e => e.suite))]
+        .sort((a, b) => (known.indexOf(a) + 1 || 99) - (known.indexOf(b) + 1 || 99));
       const locations = [...new Set(entries.map(e => e.location).filter(Boolean))];
-      ttftState.suite = suites.includes('classification') ? 'classification' : suites[0];
+      ttftState.suite = suites[0];
       ttftState.location = locations.length === 1 ? locations[0] : '*';
 
       const opts = (vals, sel) => vals.map(v => `<option value="${escHtml(v)}"${v === sel ? ' selected' : ''}>${escHtml(v)}</option>`).join('');
+      const suiteButtons = suites.map(s =>
+        `<button class="subtab${s === ttftState.suite ? ' active' : ''}" data-suite="${escHtml(s)}" onclick="onTtftFilter('suite', this.dataset.suite)">${escHtml(SUITE_LABELS[s] || s)}</button>`
+      ).join('');
       document.getElementById('ttft').innerHTML = `
+        <div class="tabs subtabs">${suiteButtons}</div>
         <div class="card">
           <h2>Streaming latency</h2>
           <div class="filters">
-            <label>Prompt suite<select onchange="onTtftFilter('suite', this.value)">${opts(suites, ttftState.suite)}</select></label>
             <label>Client location<select onchange="onTtftFilter('location', this.value)">${locations.length > 1 ? '<option value="*">all</option>' : ''}${opts(locations, ttftState.location)}</select></label>
           </div>
           <div class="table-scroll">
