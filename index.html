@@ -51,6 +51,11 @@
     .loading { text-align: center; padding: 60px; color: #888; font-size: 1rem; }
     .error { text-align: center; padding: 60px; color: #dc2626; }
     .timestamp { font-size: 0.75rem; color: #aaa; margin-top: 4px; }
+    .filters { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; font-size: 0.85rem; color: #555; }
+    .filters select { margin-left: 6px; padding: 4px 8px; border-radius: 6px; border: 1px solid #ddd; background: #fff; font-size: 0.85rem; }
+    .note { font-size: 0.8rem; color: #888; line-height: 1.5; margin-top: 12px; }
+    .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .muted { color: #aaa; }
   </style>
 </head>
 <body>
@@ -60,13 +65,15 @@
   </header>
   <main>
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('classification')">Intent Classification</button>
-      <button class="tab" onclick="switchTab('reasoning')">Block Reasoning</button>
-      <button class="tab" onclick="switchTab('recommender')">Recommender</button>
+      <button class="tab active" data-panel="classification" onclick="switchTab('classification')">Intent Classification</button>
+      <button class="tab" data-panel="reasoning" onclick="switchTab('reasoning')">Block Reasoning</button>
+      <button class="tab" data-panel="recommender" onclick="switchTab('recommender')">Recommender</button>
+      <button class="tab" data-panel="ttft" onclick="switchTab('ttft')" hidden>Time to First Token</button>
     </div>
     <div id="classification" class="panel active"><div class="loading">Loading…</div></div>
     <div id="reasoning" class="panel"><div class="loading">Loading…</div></div>
     <div id="recommender" class="panel"><div class="loading">Loading…</div></div>
+    <div id="ttft" class="panel"></div>
   </main>
   <script>
     // sort state per panel: { col: 'rate'|'label'|'tests'|'latency', dir: 1|-1 }
@@ -79,7 +86,7 @@
     const panelData = {};
 
     function switchTab(name) {
-      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ['classification','reasoning','recommender'][i] === name));
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.panel === name));
       document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === name));
     }
 
@@ -246,9 +253,139 @@
       }
     }
 
+    // ── Time to first token ────────────────────────────────────────────────
+    // results/ttft.json is optional (written by a streaming TTFT benchmark);
+    // the tab stays hidden when it is absent.
+    const TTFT_COLS = [
+      { key: 'label',       label: 'Model' },
+      { key: 'ttftP50',     label: 'TTFT p50',          get: e => e.stats.ttftMs?.p50 },
+      { key: 'ttftP95',     label: 'TTFT p95',          get: e => e.stats.ttftMs?.p95 },
+      { key: 'contentP50',  label: 'First content p50', get: e => e.stats.firstContentMs?.p50 },
+      { key: 'totalP50',    label: 'Total p50',         get: e => e.stats.totalMs?.p50 },
+      { key: 'tokps',       label: 'Decode tok/s p50',  get: e => e.stats.decodeTokPerSec?.p50 },
+      { key: 'serverTtft',  label: 'Server TTFT p50',   get: e => e.stats.serverTtftMs?.p50 },
+      { key: 'samples',     label: 'Samples' },
+      { key: 'location',    label: 'Client location' },
+    ];
+    const ttftState = { entries: [], suite: null, location: null, col: 'ttftP50', dir: 1 };
+
+    function fmtMs(ms) {
+      if (typeof ms !== 'number') return '<span class="muted">—</span>';
+      return ms >= 1000 ? (ms / 1000).toFixed(2) + 's' : Math.round(ms) + 'ms';
+    }
+
+    function ttftColor(ms) {
+      if (ms <= 300) return '#22c55e';
+      if (ms <= 1000) return '#f59e0b';
+      return '#ef4444';
+    }
+
+    function renderTtftRows() {
+      const { entries, suite, location, col, dir } = ttftState;
+      const rows = entries.filter(e => e.suite === suite && (location === '*' || e.location === location));
+      const colDef = TTFT_COLS.find(c => c.key === col);
+      rows.sort((a, b) => {
+        if (col === 'label' || col === 'location') return String(a[col]).localeCompare(String(b[col])) * dir;
+        if (col === 'samples') return (a.stats.samples - b.stats.samples) * dir;
+        const va = colDef.get(a), vb = colDef.get(b);
+        // Missing values always sort last.
+        if (typeof va !== 'number') return typeof vb !== 'number' ? 0 : 1;
+        if (typeof vb !== 'number') return -1;
+        return (va - vb) * dir;
+      });
+      const maxTtft = Math.max(1, ...rows.map(e => e.stats.ttftMs?.p50 || 0));
+
+      document.querySelector('#ttft tbody').innerHTML = rows.map(e => {
+        const s = e.stats;
+        const ttft = s.ttftMs?.p50;
+        const errs = s.errors ? ` <span class="badge fail">${s.errors} err</span>` : '';
+        const tokps = s.decodeTokPerSec?.p50;
+        return `
+          <tr>
+            <td>${escHtml(e.label)}${e.region ? ` <span class="muted">(${escHtml(e.region)})</span>` : ''}</td>
+            <td class="num">
+              <div class="pass-rate">
+                <span>${fmtMs(ttft)}</span>
+                ${typeof ttft === 'number' ? `<div class="bar-wrap" style="width:90px"><div class="bar" style="width:${ttft / maxTtft * 100}%;background:${ttftColor(ttft)}"></div></div>` : ''}
+              </div>
+            </td>
+            <td class="num latency">${fmtMs(s.ttftMs?.p95)}</td>
+            <td class="num latency">${fmtMs(s.firstContentMs?.p50)}</td>
+            <td class="num latency">${fmtMs(s.totalMs?.p50)}</td>
+            <td class="num latency">${typeof tokps === 'number' ? Math.round(tokps) : '<span class="muted">—</span>'}</td>
+            <td class="num latency">${fmtMs(s.serverTtftMs?.p50)}</td>
+            <td class="num">${s.samples - (s.errors || 0)}/${s.samples}${errs}</td>
+            <td class="latency">${escHtml(e.location || '')}</td>
+          </tr>`;
+      }).join('') || `<tr><td colspan="${TTFT_COLS.length}" class="muted">No results for this selection.</td></tr>`;
+
+      document.querySelectorAll('#ttft thead th').forEach((th, i) => {
+        th.classList.toggle('sort-asc',  TTFT_COLS[i].key === col && dir === 1);
+        th.classList.toggle('sort-desc', TTFT_COLS[i].key === col && dir === -1);
+      });
+      const newest = rows.map(e => e.timestamp).filter(Boolean).sort().pop();
+      document.getElementById('ttft-ts').textContent = newest ? `Last measured ${new Date(newest).toLocaleString()}` : '';
+    }
+
+    function onTtftSort(col) {
+      ttftState.dir = ttftState.col === col ? -ttftState.dir : (col === 'tokps' || col === 'samples' ? -1 : 1);
+      ttftState.col = col;
+      renderTtftRows();
+    }
+
+    function onTtftFilter(key, value) {
+      ttftState[key] = value;
+      renderTtftRows();
+    }
+
+    function renderTtft(data) {
+      const entries = (data.entries || []).filter(e => e.stats && e.suite);
+      if (!entries.length) return;
+      ttftState.entries = entries;
+      const suites = [...new Set(entries.map(e => e.suite))];
+      const locations = [...new Set(entries.map(e => e.location).filter(Boolean))];
+      ttftState.suite = suites.includes('classification') ? 'classification' : suites[0];
+      ttftState.location = locations.length === 1 ? locations[0] : '*';
+
+      const opts = (vals, sel) => vals.map(v => `<option value="${escHtml(v)}"${v === sel ? ' selected' : ''}>${escHtml(v)}</option>`).join('');
+      document.getElementById('ttft').innerHTML = `
+        <div class="card">
+          <h2>Streaming latency</h2>
+          <div class="filters">
+            <label>Prompt suite<select onchange="onTtftFilter('suite', this.value)">${opts(suites, ttftState.suite)}</select></label>
+            <label>Client location<select onchange="onTtftFilter('location', this.value)">${locations.length > 1 ? '<option value="*">all</option>' : ''}${opts(locations, ttftState.location)}</select></label>
+          </div>
+          <table>
+            <thead><tr>${TTFT_COLS.map(c => `<th onclick="onTtftSort('${c.key}')">${escHtml(c.label)}</th>`).join('')}</tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="timestamp" id="ttft-ts"></div>
+          <p class="note">
+            Measured client-side over streaming requests, one at a time per model, using the suite's prompts.
+            <b>TTFT</b> is the time to the first streamed token (including reasoning tokens);
+            <b>first content</b> is the first visible answer token, which differs only for reasoning models.
+            <b>Server TTFT</b> is the provider's own figure where the API reports it.
+            Client-side numbers include network round-trips, so only compare rows measured from the same client location.
+          </p>
+        </div>`;
+      document.querySelector('.tab[data-panel="ttft"]').hidden = false;
+      renderTtftRows();
+    }
+
+    async function loadTtft() {
+      try {
+        const res = await fetch('results/ttft.json');
+        if (!res.ok) return;
+        renderTtft(await res.json());
+      } catch (e) {
+        console.warn('TTFT results unavailable:', e);
+      }
+    }
+
     load('results/classification.json', 'classification');
     load('results/reasoning.json', 'reasoning');
     load('results/recommender.json', 'recommender');
+    loadTtft();
   </script>
 </body>
 </html>
