@@ -41,6 +41,13 @@ npm install
 
 Results are merged into `results/classification.json` and `results/reasoning.json` after each run.
 
+The report viewer (`index.html`) also shows a **Time to First Token** tab when a
+`results/ttft.json` file is published next to the eval results. That file comes
+from a separate streaming TTFT benchmark. Each entry has `label`, `suite`,
+`location`, `timestamp` and `stats` (`ttftMs`, `firstContentMs`, `totalMs`,
+`decodeTokPerSec`, `serverTtftMs`, each as `{p50, p95, min}`). Without the file
+the tab stays hidden.
+
 **Provider notes:**
 - `vertex:` providers read `VERTEX_PROJECT_ID` and `VERTEX_REGION` (not `GCP_PROJECT_ID`/`GCP_LOCATION`)
 - `GEMINI_API_KEY` in the shell overrides Vertex OAuth mode — the eval scripts unset it automatically
